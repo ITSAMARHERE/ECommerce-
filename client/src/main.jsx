@@ -9,8 +9,8 @@ import { Toaster } from "./components/ui/sonner.jsx";
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={store}>
-      <App />
       <Toaster />
+      <App />
     </Provider>
   </BrowserRouter>
 );
