@@ -37,54 +37,63 @@ function CommonForm({
                 [getControlItem.name]: event.target.value,
               })
             }
+            className="w-full bg-white text-gray-900 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
           />
         );
-
         break;
-      case "select":
-        element = (
-          <Select
-            onValueChange={(value) =>
-              setFormData({
-                ...formData,
-                [getControlItem.name]: value,
-              })
-            }
-            value={value}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={getControlItem.label} />
-            </SelectTrigger>
-            <SelectContent>
-              {getControlItem.options && getControlItem.options.length > 0
-                ? getControlItem.options.map((optionItem) => (
-                    <SelectItem key={optionItem.id} value={optionItem.id}>
-                      {optionItem.label}
-                    </SelectItem>
-                  ))
-                : null}
-            </SelectContent>
-          </Select>
-        );
 
-        break;
-      case "textarea":
-        element = (
-          <Textarea
-            name={getControlItem.name}
-            placeholder={getControlItem.placeholder}
-            id={getControlItem.id}
-            value={value}
-            onChange={(event) =>
-              setFormData({
-                ...formData,
-                [getControlItem.name]: event.target.value,
-              })
-            }
-          />
-        );
+        case "select":
+          element = (
+            <Select
+              onValueChange={(value) =>
+                setFormData({
+                  ...formData,
+                  [getControlItem.name]: value,
+                })
+              }
+              value={value}
+            >
+              {/* Select Trigger (Ensures White Background & Darker Text) */}
+              <SelectTrigger className="w-full bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500">
+                <SelectValue placeholder={getControlItem.label} />
+              </SelectTrigger>
+        
+              {/* Select Content (Ensures Dropdown is Opaque & Fully Visible) */}
+              <SelectContent className="bg-white text-gray-900 shadow-lg border border-gray-300 rounded-md">
+                {getControlItem.options && getControlItem.options.length > 0
+                  ? getControlItem.options.map((optionItem) => (
+                      <SelectItem
+                        key={optionItem.id}
+                        value={optionItem.id}
+                        className="hover:bg-gray-100 text-gray-900"
+                      >
+                        {optionItem.label}
+                      </SelectItem>
+                    ))
+                  : null}
+              </SelectContent>
+            </Select>
+          );
+          break;
+        
 
-        break;
+          case "textarea":
+            element = (
+              <Textarea
+                name={getControlItem.name}
+                placeholder={getControlItem.placeholder}
+                id={getControlItem.id}
+                value={value}
+                onChange={(event) =>
+                  setFormData({
+                    ...formData,
+                    [getControlItem.name]: event.target.value,
+                  })
+                }
+                className="w-full bg-white text-gray-900 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+              />
+            );
+            break;
 
       default:
         element = (
@@ -94,6 +103,7 @@ function CommonForm({
             id={getControlItem.name}
             type={getControlItem.type}
             value={value}
+            className="text-gray-400 placeholder-gray-400 border-none focus:ring-0"
             onChange={(event) =>
               setFormData({
                 ...formData,
