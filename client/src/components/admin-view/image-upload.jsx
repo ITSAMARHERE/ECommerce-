@@ -7,7 +7,7 @@ import axios from "axios";
 import { Skeleton } from "../ui/skeleton";
 
 
-function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUploadedImageUrl,imageLoadingState,setImageLoadingState }) {
+function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUploadedImageUrl,imageLoadingState,setImageLoadingState,isEditMode }) {
     const inputRef = useRef(null)
 
     function handleImageFileChange(event) {
@@ -58,20 +58,27 @@ function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUplo
             <Label className="text-lg font-semibold mb-2 block">
                 Upload Image
             </Label>
-            <div onDragOver={handleDragOver} onDrop={handleDrop} className="border-2, border-dashed rounded-lg p-4" >
+            <div onDragOver={handleDragOver} onDrop={handleDrop}
+             className={`${
+                isEditMode ? "opacity-60" : ""
+             }border-2, border-dashed rounded-lg p-4`}
+            >
                 <Input
                     id="image-upload"
                     type="file"
                     className="hidden"
                     ref={inputRef}
                     onChange={handleImageFileChange}
-                    // disabled={isEditMode}
+                    disabled={isEditMode}
                 />
                 {
                     !imageFile ? (
                         <Label
                             htmlFor="image-upload"
-                            className="flex flex-col items-center justify-center h-36 w-full border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-100 hover:bg-gray-200 transition-all ease-in-out duration-200 shadow-sm"
+                            className={`${
+                                isEditMode? 'cursor-not-allowed' : ''
+                            }
+                             flex flex-col items-center justify-center h-36 w-full border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-100 hover:bg-gray-200 transition-all ease-in-out duration-200 shadow-sm`}
                         >
                             <UploadCloudIcon className="w-12 h-12 text-gray-500 mb-3" />
                             <span className="text-gray-700 font-medium">Click to Upload or Drag & Drop</span>
