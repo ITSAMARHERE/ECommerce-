@@ -20,11 +20,14 @@ function AdminProducts() {
     const [openCreateProductsDialog, setOpenCreateProductsDialog] = useState(false);
     const [formData, setFormData] = useState(initialFormData);
     const [imageFile, setImageFile] = useState(null);
-    const [uploadedImageUrl, setUploadedImageUrl] = useState('')
+    const [uploadedImageUrl, setUploadedImageUrl] = useState('');
+    const [imageLoadingState, setImageLoadingState] = useState(false);
 
     function onSubmit() {
         // Handle form submission
     }
+
+    console.log(formData, "formData");
 
     return (
         <Fragment>
@@ -57,6 +60,7 @@ function AdminProducts() {
                         setImageFile={setImageFile}
                         uploadedImageUrl={uploadedImageUrl}
                         setUploadedImageUrl={setUploadedImageUrl}
+                        setImageLoadingState={setImageLoadingState}
                     />
 
                     {/* Form Section */}
