@@ -80,6 +80,8 @@ function AdminProducts() {
         dispatch(fetchAllProducts());
     }, [dispatch]);
 
+    console.log(formData)
+
     return (
         <Fragment>
             {/* Add New Product Button */}
@@ -116,7 +118,9 @@ function AdminProducts() {
                     {/* Header */}
                     <SheetHeader className="pb-4 sticky top-1 bg-white z-10">
                         <SheetTitle className="text-3xl font-semibold text-gray-800">
-                            {currentEditedId ? 'Edit Product' : 'Add New Product'}
+                            {currentEditedId !== null ?
+                               'Edit Product' : 'Add New Product'  
+                        }
                         </SheetTitle>
                     </SheetHeader>
 
@@ -150,7 +154,7 @@ function AdminProducts() {
                             onSubmit={onSubmit}
                             formData={formData}
                             setFormData={setFormData}
-                            buttonText={currentEditedId ? "Update Product" : "Add Product"}
+                            buttonText={currentEditedId !== null ? 'Edit' : 'Add' }
                             formControls={addProductFormElements}
                         />
                     </div>
