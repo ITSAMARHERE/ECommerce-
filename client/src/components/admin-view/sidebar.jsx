@@ -59,7 +59,7 @@ import {
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent side="left" className="w-64 bg-white shadow-lg">
             <div className="flex flex-col h-full">
-              <SheetHeader className="border-b pb-4">
+              <SheetHeader className="border-b border-gray-200 pb-4">
                 <SheetTitle className="flex items-center gap-2 mt-5">
                   <ChartNoAxesCombined size={30} className="text-gray-700" />
                   <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
@@ -69,7 +69,7 @@ import {
             </div>
           </SheetContent>
         </Sheet>
-        <aside className="hidden w-64 flex-col border-r bg-white p-6 lg:flex">
+        <aside className="hidden w-64 flex-col border-r border-gray-200 bg-white p-6 lg:flex">
           <div
             onClick={() => navigate("/admin/dashboard")}
             className="flex cursor-pointer items-center gap-2"

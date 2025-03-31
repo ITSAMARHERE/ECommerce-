@@ -18,42 +18,44 @@ function AdminProductTile({ product, setFormData, setOpenCreateProductsDialog, s
     };
 
     return (
-        <Card className="w-full max-w-md mx-auto shadow-lg rounded-xl overflow-hidden bg-white transform transition duration-300 hover:scale-105 hover:shadow-2xl">
-            {/* Product Image */}
-            <div className="relative w-full h-[300px] mb-0"> {/* Reduced margin-bottom to 0 */}
+        <Card className="w-[250px] mx-auto rounded-lg bg-white border border-gray-200 overflow-hidden shadow-md">
+            {/* Product Image - Overlapping with Negative Margin */}
+            <div className="relative w-full h-[350px] -mt-16"> {/* Negative margin to pull image up */}
                 <img
                     src={product?.image}
                     alt={product?.title}
-                    className="w-full h-full object-cover rounded-t-xl"
+                    className="w-full h-full object-cover rounded-t-lg"
                 />
             </div>
 
             {/* Product Details */}
-            <CardContent className="p-3 space-y-2"> {/* Reduced padding and space between content */}
-                <h2 className="text-xl font-extrabold text-gray-900 mt-0 mb-0 truncate">{product?.title}</h2> {/* Reduced margin-top to 0 and margin-bottom to 0 */}
-                <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product?.description}</p>
-                <div className="flex justify-between items-center">
+            <CardContent className="p-3 pt-0"> {/* Reduced padding for less gap */}
+                <h2 className="text-lg font-semibold text-gray-900 mt-0 mb-1"> {/* Reduced margin-bottom */}
+                    {product?.title}
+                </h2>
+                <p className="text-sm text-gray-600 mt-1 mb-1 line-clamp-2">{product?.description}</p> {/* Reduced margin */}
+                <div className="flex justify-between items-center mt-1"> {/* Reduced margin-top */}
                     {product?.salePrice > 0 ? (
                         <>
-                            <span className="text-lg font-semibold text-gray-500 line-through">${product?.price}</span>
-                            <span className="text-lg font-bold text-red-600">${product?.salePrice}</span>
+                            <span className="text-md text-gray-500 line-through">${product?.price}</span>
+                            <span className="text-md font-bold text-red-600">${product?.salePrice}</span>
                         </>
                     ) : (
-                        <span className="text-lg font-semibold text-gray-900">${product?.price}</span>
+                        <span className="text-md font-semibold text-gray-900">${product?.price}</span>
                     )}
                 </div>
             </CardContent>
 
             {/* Buttons */}
-            <CardFooter className="flex justify-between items-center px-3 pb-3"> {/* Reduced padding here */}
+            <CardFooter className="flex justify-end gap-4 px-3 pb-2"> {/* Increased gap between buttons */}
                 <Button
                     onClick={handleEdit}
-                    className="bg-black text-white hover:bg-gray-800 px-5 py-2 rounded-lg shadow-md transform transition duration-300"
+                    className="bg-gray-800 text-white px-3 py-1.5 rounded-md cursor-pointer hover:bg-gray-700"
                 >
                     Edit
                 </Button>
                 <Button
-                    className="bg-red-600 text-white hover:bg-red-500 px-5 py-2 rounded-lg shadow-md transform transition duration-300"
+                    className="bg-red-600 text-white px-3 py-1.5 rounded-md cursor-pointer hover:bg-red-500"
                 >
                     Delete
                 </Button>

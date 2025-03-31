@@ -4,7 +4,7 @@ import CommonForm from "@/components/common/form";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
-import { addNewProduct, fetchAllProducts } from "@/store/admin/products-slice";
+import { addNewProduct, editProduct, fetchAllProducts } from "@/store/admin/products-slice";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -41,6 +41,13 @@ function AdminProducts() {
     // Handle the form submission
     function onSubmit(event) {
         event.preventDefault();
+
+        currentEditedId !== null ? 
+        dispatch(editProduct({
+            id : currentEditedId ,formData
+        })).then((data)=>{
+            console.log(data, "edit")
+        }) : 
         dispatch(addNewProduct({
             ...formData,
             image: uploadedImageUrl // Ensure the image is passed to the product data
