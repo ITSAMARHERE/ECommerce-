@@ -4,9 +4,10 @@ import { useEffect, useRef } from "react";
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import axios from "axios";
+import { Skeleton } from "../ui/skeleton";
 
 
-function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUploadedImageUrl,setImageLoadingState }) {
+function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUploadedImageUrl,imageLoadingState,setImageLoadingState }) {
     const inputRef = useRef(null)
 
     function handleImageFileChange(event) {
@@ -77,6 +78,8 @@ function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUplo
                             <span className="text-xs text-gray-500 mt-1">PNG, JPG, GIF (max. 2MB)</span>
                         </Label>
                     ) : (
+                        imageLoadingState ?
+                        <Skeleton className="h-10 bg-gray-100"/> :
                         <div className="flex items-center justify-between bg-gray-100 border border-gray-300 rounded-lg p-3 shadow-sm">
                             {/* File Icon & Name */}
                             <div className="flex items-center space-x-3">
