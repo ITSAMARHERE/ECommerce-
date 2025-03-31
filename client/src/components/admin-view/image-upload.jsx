@@ -79,25 +79,26 @@ function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUplo
                         </Label>
                     ) : (
                         imageLoadingState ?
-                        <Skeleton className="h-10 bg-gray-100"/> :
-                        <div className="flex items-center justify-between bg-gray-100 border border-gray-300 rounded-lg p-3 shadow-sm">
-                            {/* File Icon & Name */}
-                            <div className="flex items-center space-x-3">
-                                <FileIcon className="w-6 h-6 text-primary" />
-                                <p className="text-sm font-medium text-gray-700 truncate max-w-[150px]">{imageFile.name}</p>
-                            </div>
-
-                            {/* Remove Button */}
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-gray-500 hover:text-red-500 transition-all ease-in-out duration-200"
-                                onClick={handleRemoveImage}
-                            >
-                                <XIcon className="w-5 h-5" />
-                                <span className="sr-only">Remove File</span>
-                            </Button>
+                        <Skeleton className="h-12 w-full bg-gray-200 rounded-lg" />
+                        :
+                        <div className="flex items-center justify-between bg-white border border-gray-300 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
+                        {/* File Icon & Name */}
+                        <div className="flex items-center space-x-3">
+                            <FileIcon className="w-6 h-6 text-blue-600" />
+                            <p className="text-sm font-medium text-gray-800 truncate max-w-[200px]">{imageFile.name}</p>
                         </div>
+                
+                        {/* Remove Button */}
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-gray-500 hover:text-red-500 transition-all duration-200"
+                            onClick={handleRemoveImage}
+                        >
+                            <XIcon className="w-5 h-5" />
+                            <span className="sr-only">Remove File</span>
+                        </Button>
+                    </div>
 
                     )}
             </div>
