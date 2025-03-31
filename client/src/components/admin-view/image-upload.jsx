@@ -1,0 +1,88 @@
+import { Label } from "@radix-ui/react-label";
+import { Input } from "../ui/input";
+import { useRef } from "react";
+import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
+import { Button } from "../ui/button";
+
+
+function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUploadedImageUrl }) {
+    const inputRef = useRef(null)
+
+    function handleImageFileChange(event) {
+        console.log(event.target.files, "event.target.files");
+        const selectedFile = event.target.files?.[0];
+        console.log(selectedFile);
+
+        if (selectedFile) setImageFile(selectedFile);
+    }
+
+    function handleDragOver(event) {
+        event.preventDefault();
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+        const droppedFile = event.dataTransfer.files?.[0];
+        if (droppedFile) setImageFile(droppedFile);
+    }
+
+    function handleRemoveImage() {
+        setImageFile(null);
+        if (inputRef.current) {
+            inputRef.current.value = "";
+        }
+    }
+
+    console.log(imageFile)
+
+    return (
+        <div className="w-full max-w-md mx-auto">
+            <Label className="text-lg font-semibold mb-2 block">
+                Upload Image
+            </Label>
+            <div onDragOver={handleDragOver} onDrop={handleDrop} className="border-2, border-dashed rounded-lg p-4" >
+                <Input
+                    id="image-upload"
+                    type="file"
+                    className="hidden"
+                    ref={inputRef}
+                    onChange={handleImageFileChange}
+                    // disabled={isEditMode}
+                />
+                {
+                    !imageFile ? (
+                        <Label
+                            htmlFor="image-upload"
+                            className="flex flex-col items-center justify-center h-36 w-full border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-100 hover:bg-gray-200 transition-all ease-in-out duration-200 shadow-sm"
+                        >
+                            <UploadCloudIcon className="w-12 h-12 text-gray-500 mb-3" />
+                            <span className="text-gray-700 font-medium">Click to Upload or Drag & Drop</span>
+                            <span className="text-xs text-gray-500 mt-1">PNG, JPG, GIF (max. 2MB)</span>
+                        </Label>
+                    ) : (
+                        <div className="flex items-center justify-between bg-gray-100 border border-gray-300 rounded-lg p-3 shadow-sm">
+                            {/* File Icon & Name */}
+                            <div className="flex items-center space-x-3">
+                                <FileIcon className="w-6 h-6 text-primary" />
+                                <p className="text-sm font-medium text-gray-700 truncate max-w-[150px]">{imageFile.name}</p>
+                            </div>
+
+                            {/* Remove Button */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-gray-500 hover:text-red-500 transition-all ease-in-out duration-200"
+                                onClick={handleRemoveImage}
+                            >
+                                <XIcon className="w-5 h-5" />
+                                <span className="sr-only">Remove File</span>
+                            </Button>
+                        </div>
+
+                    )}
+            </div>
+        </div>
+    );
+}
+
+export default ProductImageUpload;
