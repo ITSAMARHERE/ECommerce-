@@ -6,12 +6,12 @@ function AdminProductTile({
     setFormData,
     setOpenCreateProductsDialog,
     setCurrentEditedId,
-    handleDelete }) {
-
+    handleDelete
+}) {
     return (
-        <Card className="w-[300px] h-[560px] mx-auto rounded-lg bg-white border border-gray-300 shadow-lg flex flex-col mb-6"> {/* Increased card height */}
+        <Card className="w-[300px] h-[560px] mx-auto rounded-lg bg-white border border-gray-300 shadow-lg flex flex-col mb-6 transition-transform duration-300 ease-in-out hover:shadow-2xl hover:scale-105">
             {/* Overlapping Square Image with Increased Height */}
-            <div className="relative w-full h-[300px] -mt-12"> {/* Increased image height */}
+            <div className="relative w-full h-[300px] -mt-12"> 
                 <img
                     src={product?.image}
                     alt={product?.title}
@@ -36,7 +36,7 @@ function AdminProductTile({
             </CardContent>
 
             {/* Buttons - Reduced Bottom Margin */}
-            <CardFooter className="flex justify-between px-4 pb-4 mt-auto"> {/* Reduced bottom padding */}
+            <CardFooter className="flex justify-between px-4 pb-4 mt-auto"> 
                 <Button
                     onClick={() => {
                         setOpenCreateProductsDialog(true);
