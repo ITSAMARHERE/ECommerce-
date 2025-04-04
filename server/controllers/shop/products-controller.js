@@ -22,4 +22,4 @@ const getFilteredProducts = async(req,res)=>{
     }
 }
 
-module.exports = {getFilteredProducts}
+module.exports = {getFilteredProducts};
