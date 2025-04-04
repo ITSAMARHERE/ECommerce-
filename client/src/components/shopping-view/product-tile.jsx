@@ -5,13 +5,14 @@ import { Badge } from "../ui/badge";
 
 function ShoppingProducTile({ product }) {
   return (
-    <Card className="w-full max-w-md mx-auto border border-gray-200 transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg overflow-hidden rounded-2xl">
-      {/* Image Section */}
-      <div className="relative w-full">
+    <Card className="w-full max-w-md mx-auto border border-gray-200 border-t-0 transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg overflow-hidden rounded-2xl pt-0">
+      
+      {/* Image Section - Attached perfectly to top */}
+      <div className="relative w-full rounded-t-2xl overflow-hidden">
         <img
           src={product?.image}
           alt={product?.title}
-          className="w-full h-[220px] object-cover block rounded-t-2xl"
+          className="w-full h-[220px] object-cover block"
         />
         {product?.salePrice > 0 && (
           <Badge className="absolute top-2 left-2 bg-orange-300 hover:bg-orange-400 text-white font-semibold">
