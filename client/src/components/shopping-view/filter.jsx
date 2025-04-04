@@ -4,7 +4,7 @@ import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import { Separator } from "../ui/separator";
 
-function ProductFilter() {
+function ProductFilter({filters, handleFilter}) {
     return (
         <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
             <div className="pb-4 border-b border-gray-300">
@@ -18,7 +18,13 @@ function ProductFilter() {
                             <div className="grid gap-3 mt-2">
                                 {filterOptions[keyItem].map((option, idx) => (
                                     <Label key={idx} className="flex font-medium items-center gap-2 text-gray-700 hover:text-gray-900 cursor-pointer">
-                                        <Checkbox className="border-gray-400 focus:ring-2 focus:ring-gray-500"/>
+                                        <Checkbox
+                                        checked={
+                                            filters && Object.keys(filters).length > 0 && 
+                                            filters[keyItem] && filters[keyItem].indexOf(option.id) > -1
+                                        }
+                                        onCheckedChange={()=>handleFilter(keyItem, option.id)} 
+                                        className="border-gray-400 focus:ring-2 focus:ring-gray-500"/>
                                         {option.label}
                                     </Label>
                                 ))}

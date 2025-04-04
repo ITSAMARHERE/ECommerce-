@@ -10,23 +10,58 @@ import {
 import { sortOptions } from "@/config";
 import { fetchAllFilteredProducts } from "@/store/shop/products-slice";
 import { ArrowUpDownIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ShoppingProducTile from "@/components/shopping-view/product-tile";
 
 function ShoppingListing() {
   const dispatch = useDispatch();
   const { productList } = useSelector((state) => state.shopProducts);
+  const [filters,setFilters] = useState({});
+  const [sort, setSort ] = useState(null);
+
+  function handleSort (value){
+    setSort(value);
+  }
+
+function handleFilter(getSectionId,getCurrentOptions){
+    console.log(getSectionId,getCurrentOptions);
+
+    let cpyFilters = {...filters};
+    const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
+
+    if(indexOfCurrentSection === -1){
+        cpyFilters = {
+            ...cpyFilters,
+            [getSectionId]: [getCurrentOptions]
+        };
+    }else{
+        const indexofCurrentOption = cpyFilters[getSectionId].indexOf(getCurrentOptions);
+
+        if(indexofCurrentOption === -1) cpyFilters[getSectionId].push(getCurrentOptions)
+            else cpyFilters[getSectionId].splice(indexOfCurrentSection , 1)
+    }
+
+    setFilters(cpyFilters);
+    sessionStorage.setItem('filters', JSON.stringify(cpyFilters))
+}
+
+useEffect(()=>{
+    setSort("price-lowtohigh");
+    setFilters(JSON.parse(sessionStorage.getItem("filters")) || {})
+},[])
 
   useEffect(() => {
     dispatch(fetchAllFilteredProducts());
   }, [dispatch]);
 
+  console.log(filters, "filters")
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 p-4 md:p-8 bg-gray-50 min-h-screen">
       {/* Sidebar Filter */}
       <aside className="bg-white rounded-2xl shadow-md p-4 border border-gray-200 sticky top-4 h-fit">
-        <ProductFilter />
+        <ProductFilter filters={filters} handleFilter={handleFilter} />
       </aside>
 
       {/* Product List Section */}
@@ -55,11 +90,11 @@ function ShoppingListing() {
                 align="end"
                 className="w-48 bg-white border shadow-lg rounded-lg"
               >
-                <DropdownMenuRadioGroup>
+                <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
                   {sortOptions.map((sortItem) => (
                     <DropdownMenuRadioItem
                       key={sortItem.id}
-                      value={sortItem.value}
+                      value={sortItem.id}
                     >
                       {sortItem.label}
                     </DropdownMenuRadioItem>
