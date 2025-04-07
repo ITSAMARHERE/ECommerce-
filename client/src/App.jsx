@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuth } from "./store/auth-slice";
 import { Skeleton } from "@/components/ui/skeleton"
-
+import { Toaster } from "sonner"; 
 
 
 function App() {
@@ -36,7 +36,7 @@ function App() {
 
   return (
     <div className="flex flex-col overflow-hidden bg-white ">
-
+      <Toaster position="bottom-right" richColors expand />
 
       <Routes>
         <Route path="/auth" element={

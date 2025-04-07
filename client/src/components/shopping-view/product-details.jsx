@@ -4,8 +4,31 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { toast } from "sonner"
+
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
+
+    const dispatch = useDispatch()
+    const {user} = useSelector(state=>state.auth)
+
+    function handleAddtoCart(getCurrentProductId) {
+        dispatch(
+            addToCart({
+                userId: user?.id,
+                productId: getCurrentProductId,
+                quantity: 1,
+            })
+        ).then((data) => {
+            if (data?.payload?.success) {
+                dispatch(fetchCartItems(user?.id));
+                toast.success("Product added to cart");
+            }
+        });
+    }
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="bg-white grid grid-cols-1 md:grid-cols-2 gap-6 p-6 sm:p-8 md:p-10 max-w-[95vw] sm:max-w-[90vw] lg:max-w-[65vw] rounded-2xl shadow-2xl">
@@ -48,7 +71,11 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                         <span className="text-xs text-muted-foreground">(4.5)</span>
                     </div>
 
-                    <Button className="mt-3 w-full text-sm py-2.5">Add to Cart</Button>
+                    <Button 
+                    onClick={()=>handleAddtoCart(productDetails?._id)}
+                    className="mt-3 w-full text-sm py-2.5">
+                        Add to Cart
+                        </Button>
 
                     <Separator className="my-5" />
 

@@ -25,10 +25,8 @@ function AuthRegister() {
                 toast.success(data?.payload?.message); 
                 setTimeout(() => navigate('/auth/login'), 1000); 
             } else {
-                toast.error( <div className="bg-red-500 text-white p-2 w-full rounded">
-                  {data?.payload?.message}
-              </div>); 
-              
+                toast.error
+                (data?.payload?.message); 
             }
         });
     }

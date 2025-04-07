@@ -78,7 +78,7 @@ function ShoppingListing() {
         ).then((data) => {
             if (data?.payload?.success) {
                 dispatch(fetchCartItems(user?.id));
-                toast.success("Product added to cart ✅");
+                toast.success("Product added to cart");
             }
         });
     }
