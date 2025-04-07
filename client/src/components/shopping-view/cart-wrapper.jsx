@@ -1,12 +1,17 @@
 import { Button } from "../ui/button";
 import { SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
+import UserCartItemsContent from "./cart-items-content";
 
-function UserCartWrapper() {
+function UserCartWrapper({cartItems}) {
     return (
-        <SheetContent className="sm:max-w-md bg-white">
+        <SheetContent className="sm:max-w-md bg-white border-white">
             <SheetHeader>
                 <SheetTitle>Your Cart</SheetTitle>
                 <div className="mt-4 space-y-3">
+                    {
+                        cartItems && cartItems.length > 0 ?
+                        cartItems.map(item=><UserCartItemsContent cartItem={item}/>) : null
+                    }
                     <div className="flex justify-between">
                         <span className="font-bold text-lg">Total</span>
                         <span className="font-bold text-lg">$1000</span>

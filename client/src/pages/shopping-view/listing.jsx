@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ShoppingProducTile from "@/components/shopping-view/product-tile";
 import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping-view/product-details";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 
 
 function createSearchParamsHelper(filterParams) {
@@ -34,6 +35,7 @@ function createSearchParamsHelper(filterParams) {
 function ShoppingListing() {
     const dispatch = useDispatch();
     const { productList, productDetails } = useSelector((state) => state.shopProducts);
+    const { user } = useSelector(state => state.auth);
     const [filters, setFilters] = useState({});
     const [sort, setSort] = useState(null);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -66,9 +68,23 @@ function ShoppingListing() {
     }
 
     function handleGetProductDetails(getCurrentProductId) {
-        console.log(getCurrentProductId);
         dispatch(fetchProductDetails(getCurrentProductId));
 
+    }
+
+    function handleAddtoCart(getCurrentProductId) {
+        console.log(getCurrentProductId);
+        dispatch(
+            addToCart({
+                userId: user?.id,
+                productId: getCurrentProductId,
+                quantity: 1
+            })
+        ).then((data) => {
+            if (data?.payload?.success) {
+                dispatch(fetchCartItems(user?.id))
+            }
+        });
     }
 
     useEffect(() => {
@@ -90,9 +106,10 @@ function ShoppingListing() {
 
     useEffect(() => {
         if (productDetails !== null) setOpenDetailsDialog(true)
-    }, [productDetails])
+    }, [productDetails]);
 
-    console.log(productDetails, "productDetails")
+
+
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 p-4 md:p-8 bg-gray-50 min-h-screen">
@@ -146,7 +163,12 @@ function ShoppingListing() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
                     {productList && productList.length > 0 ? (
                         productList.map((productItem, index) => (
-                            <ShoppingProducTile handleGetProductDetails={handleGetProductDetails} key={index} product={productItem} />
+                            <ShoppingProducTile
+                                handleGetProductDetails={handleGetProductDetails}
+                                key={index}
+                                product={productItem}
+                                handleAddtoCart={handleAddtoCart}
+                            />
                         ))
                     ) : (
                         <div className="col-span-full text-center text-gray-500 py-16">

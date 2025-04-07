@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { brandOptionsMap, categoryOptionsMap } from "@/config";
 import { Badge } from "../ui/badge";
 
-function ShoppingProducTile({ product, handleGetProductDetails }) {
+function ShoppingProducTile({ product, handleGetProductDetails, handleAddtoCart }) {
   return (
     <Card className="w-full max-w-md mx-auto border border-gray-200 border-t-0 transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg overflow-hidden rounded-2xl pt-0">
       <div onClick={() => handleGetProductDetails(product?._id)} >
@@ -48,7 +48,9 @@ function ShoppingProducTile({ product, handleGetProductDetails }) {
           </div>
       {/* Add to Cart Button */}
       <CardFooter>
-        <Button className="w-full cursor-pointer">Add to cart</Button>
+        <Button
+         onClick={()=>handleAddtoCart(product?._id)}
+        className="w-full cursor-pointer">Add to cart</Button>
       </CardFooter>
     </Card>
   );
