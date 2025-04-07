@@ -3,10 +3,10 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { brandOptionsMap, categoryOptionsMap } from "@/config";
 import { Badge } from "../ui/badge";
 
-function ShoppingProducTile({ product }) {
+function ShoppingProducTile({ product, handleGetProductDetails }) {
   return (
     <Card className="w-full max-w-md mx-auto border border-gray-200 border-t-0 transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg overflow-hidden rounded-2xl pt-0">
-      
+      <div onClick={() => handleGetProductDetails(product?._id)} >
       {/* Image Section - Attached perfectly to top */}
       <div className="relative w-full rounded-t-2xl overflow-hidden">
         <img
@@ -45,7 +45,7 @@ function ShoppingProducTile({ product }) {
           )}
         </div>
       </CardContent>
-
+          </div>
       {/* Add to Cart Button */}
       <CardFooter>
         <Button className="w-full cursor-pointer">Add to cart</Button>
