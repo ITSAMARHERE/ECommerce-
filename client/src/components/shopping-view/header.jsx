@@ -23,12 +23,12 @@ function MenuItems() {
 
   const navigate = useNavigate()
 
-  function handleNavigate(getCurrentMenuItem){
+  function handleNavigate(getCurrentMenuItem) {
     sessionStorage.removeItem('filters')
     const currentFilter = getCurrentMenuItem.id !== 'home' ?
-    {
-      category : [getCurrentMenuItem.id]
-    }:null
+      {
+        category: [getCurrentMenuItem.id]
+      } : null
 
     sessionStorage.setItem('filters', JSON.stringify(currentFilter))
 
@@ -38,7 +38,7 @@ function MenuItems() {
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-4 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
         <Label
-          onClick={()=>handleNavigate(menuItem)}
+          onClick={() => handleNavigate(menuItem)}
           key={menuItem.id}
           className="text-sm cursor-pointer font-medium relative group transition-all"
         >
@@ -54,7 +54,7 @@ function MenuItems() {
 
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
-  const {cartItems} = useSelector(state=>state.shopCart);
+  const { cartItems } = useSelector(state => state.shopCart);
   const [openCartSheet, setOpenCartSheet] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -63,31 +63,32 @@ function HeaderRightContent() {
     dispatch(logoutUser());
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(fetchCartItems(user?.id));
-  },[dispatch]);
+  }, [dispatch]);
 
-  console.log(cartItems,"myname")
+  console.log(cartItems, "myname")
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
         <Button
           onClick={() => setOpenCartSheet(true)}
-          variant="outline"
           size="icon"
-          className="hover:bg-blue-100"
+          className=" cursor-pointer border border-gray-300 bg-white hover:bg-gray-100 transition-all duration-200 shadow-sm rounded-xl p-2"
         >
-          <ShoppingCart className="w-6 h-6 text-gray-700" />
+          <ShoppingCart className="w-5 h-5 text-gray-700" />
           <span className="sr-only">User cart</span>
         </Button>
+
+
         <UserCartWrapper cartItems={
-          cartItems&& cartItems.items && cartItems.items.length > 0 ? cartItems.items : []} />
+          cartItems && cartItems.items && cartItems.items.length > 0 ? cartItems.items : []} />
       </Sheet>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="bg-black hover:scale-105 transition-transform">
+          <Avatar className="bg-black cursor-pointer hover:scale-105 transition-transform">
             <AvatarFallback className="bg-black text-white font-extrabold">
               {user?.userName[0].toUpperCase()}
             </AvatarFallback>
