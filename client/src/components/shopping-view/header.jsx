@@ -17,21 +17,36 @@ import { logoutUser } from "@/store/auth-slice";
 import UserCartWrapper from "./cart-wrapper";
 import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
+import { Label } from "../ui/label";
 
 function MenuItems() {
+
+  const navigate = useNavigate()
+
+  function handleNavigate(getCurrentMenuItem){
+    sessionStorage.removeItem('filters')
+    const currentFilter = getCurrentMenuItem.id !== 'home' ?
+    {
+      category : [getCurrentMenuItem.id]
+    }:null
+
+    sessionStorage.setItem('filters', JSON.stringify(currentFilter))
+
+    navigate(getCurrentMenuItem.path)
+  }
   return (
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-4 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
-        <Link
+        <Label
+          onClick={()=>handleNavigate(menuItem)}
           key={menuItem.id}
-          to={menuItem.path}
-          className="text-sm font-medium relative group transition-all"
+          className="text-sm cursor-pointer font-medium relative group transition-all"
         >
           <span className="hover:text-blue-600 transition-colors duration-300">
             {menuItem.label}
           </span>
           <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
-        </Link>
+        </Label>
       ))}
     </nav>
   );

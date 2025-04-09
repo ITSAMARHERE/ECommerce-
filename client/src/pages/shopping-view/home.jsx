@@ -6,9 +6,12 @@ import { Airplay, BabyIcon, ChevronLeftIcon, ChevronRightIcon, CloudLightning, H
 import { Card, CardContent } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchAllFilteredProducts } from '@/store/shop/products-slice'
+import { fetchAllFilteredProducts, fetchProductDetails } from '@/store/shop/products-slice'
 import ShoppingProducTile from '@/components/shopping-view/product-tile'
 import { useNavigate } from 'react-router-dom'
+import { addToCart, fetchCartItems } from '@/store/shop/cart-slice'
+import { toast, } from "sonner"; 
+import ProductDetailsDialog from '@/components/shopping-view/product-details'
 
 const categoriesWithIcon = [
     { id: "men", label: "Men", icon: ShirtIcon },
@@ -29,7 +32,10 @@ const brandsWithIcon = [
 
 function ShoppingHome() {
     const [currentSlide, setCurrentSlide] = useState(0);
-    const { productList } = useSelector(state => state.shopProducts);
+    const { productList, productDetails } = useSelector((state) => state.shopProducts);
+    const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+    const { user } = useSelector((state) => state.auth);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -40,6 +46,31 @@ function ShoppingHome() {
         sessionStorage.setItem('filters', JSON.stringify({ [section]: [item.id] }));
         navigate('/shop/listing');
     };
+
+    function handleGetProductDetails(getCurrentProductId) {
+        dispatch(fetchProductDetails(getCurrentProductId));
+    }
+
+    function handleAddtoCart(getCurrentProductId) {
+        dispatch(
+            addToCart({
+                userId: user?.id,
+                productId: getCurrentProductId,
+                quantity: 1,
+            })
+        ).then((data) => {
+            if (data?.payload?.success) {
+                dispatch(fetchCartItems(user?.id));
+                toast.success("Product added to cart");
+            }
+        });
+    }
+
+    useEffect(() => {
+        if (productDetails !== null) setOpenDetailsDialog(true);
+    }, [productDetails]);
+
+
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -128,13 +159,23 @@ function ShoppingHome() {
                         {
                             productList?.length > 0
                                 ? productList.map((productItem, index) => (
-                                    <ShoppingProducTile key={index} product={productItem} />
+                                    <ShoppingProducTile
+                                    handleGetProductDetails = {handleGetProductDetails}
+                                    key={index}
+                                    product={productItem}
+                                    handleAddtoCart = {handleAddtoCart}
+                                    />
                                 ))
                                 : <p className="text-center col-span-full text-gray-500">No featured products available.</p>
                         }
                     </div>
                 </div>
             </section>
+            <ProductDetailsDialog
+                    open={openDetailsDialog}
+                    setOpen={setOpenDetailsDialog}
+                    productDetails={productDetails}
+                />
         </div>
     );
 }
