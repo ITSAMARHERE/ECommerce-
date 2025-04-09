@@ -1,4 +1,4 @@
-import { StarIcon } from "lucide-react";
+import { Flag, StarIcon } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent } from "../ui/dialog";
@@ -7,6 +7,7 @@ import { Input } from "../ui/input";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { toast } from "sonner"
+import { setProductDetails } from "@/store/shop/products-slice";
 
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
@@ -29,8 +30,13 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         });
     }
 
+    function handleDialogClose(){
+        setOpen(false)
+        dispatch(setProductDetails());
+    }
+
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleDialogClose}>
             <DialogContent className="bg-white grid grid-cols-1 md:grid-cols-2 gap-6 p-6 sm:p-8 md:p-10 max-w-[95vw] sm:max-w-[90vw] lg:max-w-[65vw] rounded-2xl shadow-2xl">
 
                 {/* Image Section */}
