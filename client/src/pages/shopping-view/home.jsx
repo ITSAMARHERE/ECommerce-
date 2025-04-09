@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import bannerOne from '../../assets/banner-1.webp'
 import bannerTwo from '../../assets/banner-2.webp'
 import bannerThree from '../../assets/banner-3.webp'
-import { Airplay, BabyIcon, ChevronLeftIcon, ChevronRightIcon, CloudLightning, Heater, Images, Shirt, ShirtIcon, ShoppingBasket, UmbrellaIcon, WashingMachine, WatchIcon } from 'lucide-react'
+import { Shirt, Baby, Watch, Footprints, ShoppingBag, Activity, TrendingUp, Flame, Gem, Star, Crown, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Card, CardContent } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,20 +14,20 @@ import { toast, } from "sonner";
 import ProductDetailsDialog from '@/components/shopping-view/product-details'
 
 const categoriesWithIcon = [
-    { id: "men", label: "Men", icon: ShirtIcon },
-    { id: "women", label: "Women", icon: CloudLightning },
-    { id: "kids", label: "Kids", icon: BabyIcon },
-    { id: "accessories", label: "Accessories", icon: WatchIcon },
-    { id: "footwear", label: "Footwear", icon: UmbrellaIcon },
+    { id: "men", label: "Men", icon: Shirt },             
+    { id: "women", label: "Women", icon: ShoppingBag },    
+    { id: "kids", label: "Kids", icon: Baby },             
+    { id: "accessories", label: "Accessories", icon: Watch },  
+    { id: "footwear", label: "Footwear", icon: Footprints },         
 ];
 
 const brandsWithIcon = [
-    { id: "nike", label: "Nike", icon: Shirt },
-    { id: "adidas", label: "Adidas", icon: WashingMachine },
-    { id: "puma", label: "Puma", icon: ShoppingBasket },
-    { id: "levi", label: "Levi's", icon: Airplay },
-    { id: "zara", label: "Zara", icon: Images },
-    { id: "h&m", label: "H&M", icon: Heater },
+    { id: "nike", label: "Nike", icon: Activity },         
+    { id: "adidas", label: "Adidas", icon: TrendingUp },   
+    { id: "puma", label: "Puma", icon: Flame },           
+    { id: "levi", label: "Levi's", icon: Gem },          
+    { id: "zara", label: "Zara", icon: Star },         
+    { id: "h&m", label: "H&M", icon: Crown },              
 ];
 
 function ShoppingHome() {
