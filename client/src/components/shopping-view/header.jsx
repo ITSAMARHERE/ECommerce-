@@ -88,34 +88,41 @@ function HeaderRightContent() {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="bg-black cursor-pointer hover:scale-105 transition-transform">
+          <Avatar className="bg-black cursor-pointer hover:scale-105 transition-transform shadow-md">
             <AvatarFallback className="bg-black text-white font-extrabold">
               {user?.userName[0].toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent
           side="right"
-          className="w-56 bg-white shadow-md border border-gray-300"
+          className="w-60 bg-white border border-gray-200 rounded-xl shadow-lg p-2 space-y-1"
         >
-          <DropdownMenuLabel>
-            Logged in as {user?.userName}
+          <DropdownMenuLabel className="text-sm font-medium text-gray-500 px-2">
+            Logged in as <span className="font-semibold text-gray-700">{user?.userName}</span>
           </DropdownMenuLabel>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuItem
             onClick={() => navigate("/shop/account")}
-            className="cursor-pointer"
+            className="cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 flex items-center gap-2 text-gray-700 transition-colors"
           >
-            <UserCog className="mr-2 h-4 w-4" />
+            <UserCog className="h-4 w-4 text-gray-500" />
             Account
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-            <LogOut className="mr-2 h-4 w-4" />
+
+          <DropdownMenuItem
+            onClick={handleLogout}
+            className="cursor-pointer px-3 py-2 rounded-lg hover:bg-red-100 flex items-center gap-2 text-red-600 transition-colors"
+          >
+            <LogOut className="h-4 w-4 text-red-500" />
             Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
     </div>
   );
 }
