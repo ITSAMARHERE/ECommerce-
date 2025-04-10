@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import UserCartItemsContent from "./cart-items-content";
 
-function UserCartWrapper({cartItems}) {
+function UserCartWrapper({cartItems, setOpenCartSheet}) {
 
     const naviagte = useNavigate();
 
@@ -28,7 +28,10 @@ function UserCartWrapper({cartItems}) {
                         <span className="font-bold text-lg">${totalCartAmount}</span>
                     </div>
                     <Button 
-                    onClick={()=> naviagte('/shop/checkout')}
+                    onClick={()=> {
+                        naviagte('/shop/checkout')
+                        setOpenCartSheet(false)
+                    }}
                     className="w-full">Checkout</Button>
                 </div>
             </SheetHeader>

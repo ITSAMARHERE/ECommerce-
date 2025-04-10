@@ -96,7 +96,7 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
   return (
     <div className="space-y-10">
       {/* Address Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 ">
         {addressList?.map((item) => (
           <div
             key={item._id}
