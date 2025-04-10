@@ -1,7 +1,9 @@
-const paypal = require("../../helpers/paypal");
+// controllers/shop/order-controller.js
+const paypalSdk = require("../../helpers/paypal");
 const Order = require("../../models/Order");
 const Cart = require("../../models/Cart");
 const Product = require("../../models/Product");
+const { v4: uuidv4 } = require('uuid');
 
 const createOrder = async (req, res) => {
   try {
@@ -20,81 +22,94 @@ const createOrder = async (req, res) => {
       cartId,
     } = req.body;
 
-    const create_payment_json = {
-      intent: "sale",
-      payer: {
-        payment_method: "paypal",
+    // Create a PayPal order using the new SDK
+    const request = new paypalSdk.orders.OrdersCreateRequest();
+    request.prefer("return=representation");
+    
+    // Format items for PayPal
+    const paypalItems = cartItems.map(item => ({
+      name: item.title,
+      sku: item.productId,
+      unit_amount: {
+        currency_code: "USD",
+        value: item.price.toFixed(2)
       },
-      redirect_urls: {
-        return_url: "http://localhost:5173/shop/paypal-return",
-        cancel_url: "http://localhost:5173/shop/paypal-cancel",
-      },
-      transactions: [
-        {
-          item_list: {
-            items: cartItems.map((item) => ({
-              name: item.title,
-              sku: item.productId,
-              price: item.price.toFixed(2),
-              currency: "USD",
-              quantity: item.quantity,
-            })),
-          },
-          amount: {
-            currency: "USD",
-            total: totalAmount.toFixed(2),
-          },
-          description: "description",
+      quantity: item.quantity
+    }));
+
+    // Calculate item total
+    const itemTotal = cartItems.reduce((sum, item) => 
+      sum + (item.price * item.quantity), 0).toFixed(2);
+
+    request.requestBody({
+      intent: "CAPTURE",
+      purchase_units: [{
+        reference_id: uuidv4(),
+        amount: {
+          currency_code: "USD",
+          value: totalAmount.toFixed(2),
+          breakdown: {
+            item_total: {
+              currency_code: "USD",
+              value: itemTotal
+            }
+          }
         },
-      ],
-    };
-
-    paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
-      if (error) {
-        console.log(error);
-
-        return res.status(500).json({
-          success: false,
-          message: "Error while creating paypal payment",
-        });
-      } else {
-        const newlyCreatedOrder = new Order({
-          userId,
-          cartId,
-          cartItems,
-          addressInfo,
-          orderStatus,
-          paymentMethod,
-          paymentStatus,
-          totalAmount,
-          orderDate,
-          orderUpdateDate,
-          paymentId,
-          payerId,
-        });
-
-        await newlyCreatedOrder.save();
-
-        const approvalURL = paymentInfo.links.find(
-          (link) => link.rel === "approval_url"
-        ).href;
-
-        res.status(201).json({
-          success: true,
-          approvalURL,
-          orderId: newlyCreatedOrder._id,
-        });
+        items: paypalItems
+      }],
+      application_context: {
+        brand_name: "Your Store Name",
+        // Change to NO_SHIPPING instead of SET_PROVIDED_ADDRESS since we don't have shipping address details
+        shipping_preference: "NO_SHIPPING",  
+        user_action: "PAY_NOW",
+        return_url: "http://localhost:5173/shop/paypal-return",
+        cancel_url: "http://localhost:5173/shop/paypal-cancel"
       }
     });
-  } catch (e) {
-    console.log(e);
+
+    // Execute the PayPal request
+    const paypalOrder = await paypalSdk.client.execute(request);
+    
+    // Save order to database
+    const newlyCreatedOrder = new Order({
+      userId,
+      cartId,
+      cartItems,
+      addressInfo,
+      orderStatus,
+      paymentMethod,
+      paymentStatus,
+      totalAmount,
+      orderDate,
+      orderUpdateDate,
+      paymentId: paypalOrder.result.id, // Use PayPal order ID
+      payerId,
+    });
+
+    await newlyCreatedOrder.save();
+
+    // Get the approval URL from the PayPal response
+    const approvalURL = paypalOrder.result.links.find(
+      link => link.rel === "approve"
+    ).href;
+
+    res.status(201).json({
+      success: true,
+      approvalURL,
+      orderId: newlyCreatedOrder._id,
+    });
+    
+  } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
-      message: "Some error occured!",
+      message: "Error creating PayPal order",
+      error: error.message
     });
   }
 };
 
+// The rest of your code remains the same
 const capturePayment = async (req, res) => {
   try {
     const { paymentId, payerId, orderId } = req.body;
