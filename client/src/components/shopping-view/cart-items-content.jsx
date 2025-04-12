@@ -65,7 +65,7 @@ function UserCartItemsContent({ cartItem }) {
                     <Button
                         variant="outline"
                         size="icon"
-                        className="h-8 w-8 rounded-full hover:bg-gray-100"
+                        className="h-8 w-8 rounded-full  hover:bg-gray-100"
                         onClick={() => handleUpdateQuantity(cartItem, "plus")}
                     >
                         <Plus className="w-4 h-4" />

@@ -10,24 +10,24 @@ import { fetchAllFilteredProducts, fetchProductDetails } from '@/store/shop/prod
 import ShoppingProducTile from '@/components/shopping-view/product-tile'
 import { useNavigate } from 'react-router-dom'
 import { addToCart, fetchCartItems } from '@/store/shop/cart-slice'
-import { toast, } from "sonner"; 
+import { toast, } from "sonner";
 import ProductDetailsDialog from '@/components/shopping-view/product-details'
 
 const categoriesWithIcon = [
-    { id: "men", label: "Men", icon: Shirt },             
-    { id: "women", label: "Women", icon: ShoppingBag },    
-    { id: "kids", label: "Kids", icon: Baby },             
-    { id: "accessories", label: "Accessories", icon: Watch },  
-    { id: "footwear", label: "Footwear", icon: Footprints },         
+    { id: "men", label: "Men", icon: Shirt },
+    { id: "women", label: "Women", icon: ShoppingBag },
+    { id: "kids", label: "Kids", icon: Baby },
+    { id: "accessories", label: "Accessories", icon: Watch },
+    { id: "footwear", label: "Footwear", icon: Footprints },
 ];
 
 const brandsWithIcon = [
-    { id: "nike", label: "Nike", icon: Activity },         
-    { id: "adidas", label: "Adidas", icon: TrendingUp },   
-    { id: "puma", label: "Puma", icon: Flame },           
-    { id: "levi", label: "Levi's", icon: Gem },          
-    { id: "zara", label: "Zara", icon: Star },         
-    { id: "h&m", label: "H&M", icon: Crown },              
+    { id: "nike", label: "Nike", icon: Activity },
+    { id: "adidas", label: "Adidas", icon: TrendingUp },
+    { id: "puma", label: "Puma", icon: Flame },
+    { id: "levi", label: "Levi's", icon: Gem },
+    { id: "zara", label: "Zara", icon: Star },
+    { id: "h&m", label: "H&M", icon: Crown },
 ];
 
 function ShoppingHome() {
@@ -158,24 +158,26 @@ function ShoppingHome() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {
                             productList?.length > 0
-                                ? productList.map((productItem, index) => (
-                                    <ShoppingProducTile
-                                    handleGetProductDetails = {handleGetProductDetails}
-                                    key={index}
-                                    product={productItem}
-                                    handleAddtoCart = {handleAddtoCart}
-                                    />
-                                ))
+                                ? productList
+                                    .slice(-4) 
+                                    .map((productItem, index) => (
+                                        <ShoppingProducTile
+                                            handleGetProductDetails={handleGetProductDetails}
+                                            key={index}
+                                            product={productItem}
+                                            handleAddtoCart={handleAddtoCart}
+                                        />
+                                    ))
                                 : <p className="text-center col-span-full text-gray-500">No featured products available.</p>
                         }
                     </div>
                 </div>
             </section>
             <ProductDetailsDialog
-                    open={openDetailsDialog}
-                    setOpen={setOpenDetailsDialog}
-                    productDetails={productDetails}
-                />
+                open={openDetailsDialog}
+                setOpen={setOpenDetailsDialog}
+                productDetails={productDetails}
+            />
         </div>
     );
 }

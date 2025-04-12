@@ -32,7 +32,7 @@ function UserCartWrapper({cartItems, setOpenCartSheet}) {
                         naviagte('/shop/checkout')
                         setOpenCartSheet(false)
                     }}
-                    className="w-full">Checkout</Button>
+                    className="w-full cursor-pointer hover:bg-gray-800 ">Checkout</Button>
                 </div>
             </SheetHeader>
 

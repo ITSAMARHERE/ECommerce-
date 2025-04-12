@@ -34,6 +34,7 @@ function ShoppingCheckout() {
 
         const orderData = {
             userId: user?.id,
+            cartId: cartItems?._id,
             cartItems: cartItems.items.map(singleCartItem => ({
                 productId: singleCartItem?.productId,
                 title: singleCartItem?.title,
@@ -82,7 +83,7 @@ function ShoppingCheckout() {
                     src={img}
                     className="h-full w-full object-cover object-center"
                 />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                <div className="absolute inset-0  bg-black/30 flex items-center justify-center">
                     <h1 className="text-white text-4xl md:text-5xl font-bold drop-shadow-lg animate-fade-in">
                         Checkout
                     </h1>
@@ -114,7 +115,7 @@ function ShoppingCheckout() {
                     <div className="mt-4 w-full">
                         <Button
                             onClick={handleInitiatePaypalPayment}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white text-base py-2">
+                            className="w-full bg-blue-600 cursor-pointer hover:bg-blue-700 text-white text-base py-2">
                             Checkout with PayPal
                         </Button>
                     </div>

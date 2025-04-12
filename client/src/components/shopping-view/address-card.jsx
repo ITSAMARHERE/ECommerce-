@@ -18,7 +18,7 @@ function AddressCard({
           ? () => setCurrentSelectedAddress(addressInfo)
           : null
       }
-      className={`cursor-pointer transition-all duration-200 ${
+      className={` transition-all duration-200 ${
         isSelected
           ? "border-[2px] border-gray-900 bg-gray-50"
           : "border border-gray-200 hover:border-gray-400"
@@ -35,6 +35,7 @@ function AddressCard({
       <CardFooter className="px-4 pb-4 pt-2 flex justify-end gap-3">
         <Button
           variant="outline"
+          className="cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             handleEditAddress(addressInfo);
@@ -44,6 +45,7 @@ function AddressCard({
         </Button>
         <Button
           variant="destructive"
+          className="cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             handleDeleteAddress(addressInfo);
