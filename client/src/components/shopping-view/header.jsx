@@ -64,9 +64,14 @@ function HeaderRightContent() {
   }
 
   useEffect(() => {
-    dispatch(fetchCartItems(user?.id));
-  }, [dispatch]);
-
+    if (user?.id) {
+      console.log("Fetching cart for user ID:", user.id);
+      dispatch(fetchCartItems(user?.id));
+    } else {
+      console.log("User ID is not available.");
+    }
+  }, [dispatch, user?.id]);
+  
   console.log(cartItems, "myname")
 
   return (

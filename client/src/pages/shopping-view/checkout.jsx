@@ -5,6 +5,8 @@ import UserCartItemsContent from '@/components/shopping-view/cart-items-content'
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { createNewOrder } from '@/store/shop/order-slice';
+import { toast } from "sonner"
+
 
 function ShoppingCheckout() {
     const { cartItems } = useSelector(state => state.shopCart);
@@ -31,6 +33,24 @@ function ShoppingCheckout() {
 
 
     function handleInitiatePaypalPayment() {
+
+        if(cartItems.length === 0){
+            toast.error("Your cart is empty. Please add items to proceed",
+                {
+                variant : 'desctructive'
+                }
+            )
+            return;
+        }
+
+        if(currentSelectedAddress === null){
+            toast.error("Please select one address to proceed.",
+                {
+                variant : 'desctructive'
+                }
+            )
+            return;
+        }
 
         const orderData = {
             userId: user?.id,

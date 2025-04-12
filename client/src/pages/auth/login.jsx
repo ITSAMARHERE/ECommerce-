@@ -3,7 +3,7 @@ import { loginFormControls } from "@/config";
 import { loginUser } from "@/store/auth-slice";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const initialState = {
@@ -21,7 +21,7 @@ function AuthLogin() {
     dispatch(loginUser(formData)).then((data) => {
       if (data?.payload?.success) {
         toast.success(data?.payload?.message);
-        setTimeout(() => navigate('/auth/login'), 1000);
+        setTimeout(() => Navigate('/auth/login'), 1000);
       } else {
         toast.error(
           (data?.payload?.message));
