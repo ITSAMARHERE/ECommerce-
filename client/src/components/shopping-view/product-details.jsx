@@ -12,10 +12,25 @@ import { setProductDetails } from "@/store/shop/products-slice";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
-    const dispatch = useDispatch()
-    const {user} = useSelector(state=>state.auth)
+    const dispatch = useDispatch();
+    const { user } = useSelector(state => state.auth);
+    const { cartItems } = useSelector(state => state.shopCart);
 
-    function handleAddtoCart(getCurrentProductId) {
+    function handleAddtoCart(getCurrentProductId, getTotalStock) {
+        let getCartItems = cartItems.items || [];
+
+        if (getCartItems.length) {
+            const indexOfCurrentItem = getCartItems.findIndex(item => item.productId === getCurrentProductId);
+            if (indexOfCurrentItem > -1) {
+                const getQuantity = getCartItems[indexOfCurrentItem].quantity
+                if (getQuantity + 1 > getTotalStock) {
+                    toast.error(`Only ${getQuantity} quantity can be added for this item`);
+                    return;
+                }
+            }
+
+            ;
+        }
         dispatch(
             addToCart({
                 userId: user?.id,
@@ -30,7 +45,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         });
     }
 
-    function handleDialogClose(){
+    function handleDialogClose() {
         setOpen(false)
         dispatch(setProductDetails());
     }
@@ -77,11 +92,18 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                         <span className="text-xs text-muted-foreground">(4.5)</span>
                     </div>
 
-                    <Button 
-                    onClick={()=>handleAddtoCart(productDetails?._id)}
-                    className="mt-3 w-full text-sm py-2.5">
-                        Add to Cart
-                        </Button>
+                    {
+                        productDetails?.totalStock === 0 ?
+                            <Button
+                                className="mt-3 w-full opacity-60 cursor-not-allowed text-sm py-2.5">
+                                Out of Stock
+                            </Button> :
+                            <Button
+                                onClick={() => handleAddtoCart(productDetails?._id, productDetails?.totalStock)}
+                                className="mt-3 w-full text-sm py-2.5">
+                                Add to Cart
+                            </Button>
+                    }
 
                     <Separator className="my-5" />
 

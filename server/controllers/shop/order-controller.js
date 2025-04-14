@@ -127,20 +127,20 @@ const capturePayment = async (req, res) => {
     order.paymentId = paymentId;
     order.payerId = payerId;
 
-    // for (let item of order.cartItems) {
-    //   let product = await Product.findById(item.productId);
+    for (let item of order.cartItems) {
+      let product = await Product.findById(item.productId);
 
-    //   if (!product) {
-    //     return res.status(404).json({
-    //       success: false,
-    //       message: `Not enough stock for this product ${product.title}`,
-    //     });
-    //   }
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: `Not enough stock for this product ${product.title}`,
+        });
+      }
 
-    //   product.totalStock -= item.quantity;
+      product.totalStock -= item.quantity;
 
-    //   await product.save();
-    // }
+      await product.save();
+    }
 
     const getCartId = order.cartId;
     await Cart.findByIdAndDelete(getCartId);
