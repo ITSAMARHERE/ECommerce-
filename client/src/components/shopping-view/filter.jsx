@@ -27,24 +27,8 @@ function ProductFilter({ filters, handleFilter }) {
     return (
         <div className="bg-white rounded-lg shadow-sm p-3 md:p-4 border border-gray-200">
             <div className="pb-3 flex items-center justify-between">
-                <h2 className="text-base md:text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <Filter className="w-4 h-4 md:w-5 md:h-5" />
-                    Filters
-                </h2>
                 
-                {/* Only show clear all if there are active filters */}
-                {filters && Object.values(filters).some(arr => arr.length > 0) && (
-                    <button 
-                        className="text-xs md:text-sm text-blue-600 hover:text-blue-800 font-medium"
-                        onClick={() => {
-                            // Assuming handleFilter can clear all when passed special parameters
-                            // You would need to implement this in your parent component
-                            handleFilter('clearAll');
-                        }}
-                    >
-                        Clear All
-                    </button>
-                )}
+                
             </div>
             
             <div className="py-2 space-y-3 md:space-y-4">

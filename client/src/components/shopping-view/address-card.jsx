@@ -51,7 +51,10 @@ function AddressCard({
         </div>
       </CardContent>
 
-      <CardFooter className="px-4 pb-4 pt-0 flex justify-end gap-2 mt-auto">
+      <CardFooter className="px-4 pb-2 pt-0 flex justify-center gap-2 mt-6">
+
+
+
         <Button
           variant="outline"
           size="sm"
@@ -61,7 +64,7 @@ function AddressCard({
             handleEditAddress(addressInfo);
           }}
         >
-          <Edit className="h-4 w-4 mr-1" />
+          <Edit className="h-4 w-4 " />
           Edit
         </Button>
         <Button
@@ -73,7 +76,7 @@ function AddressCard({
             handleDeleteAddress(addressInfo);
           }}
         >
-          <Trash2 className="h-4 w-4 mr-1" />
+          <Trash2 className="h-4 w-4 " />
           Delete
         </Button>
       </CardFooter>
