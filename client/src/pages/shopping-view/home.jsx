@@ -1,7 +1,4 @@
 import { Button } from '@/components/ui/button'
-import bannerOne from '../../assets/banner-1.webp'
-import bannerTwo from '../../assets/banner-2.webp'
-import bannerThree from '../../assets/banner-3.webp'
 import { Shirt, Baby, Watch, Footprints, ShoppingBag, Activity, TrendingUp, Flame, Gem, Star, Crown, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Card, CardContent } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
@@ -12,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { addToCart, fetchCartItems } from '@/store/shop/cart-slice'
 import { toast, } from "sonner";
 import ProductDetailsDialog from '@/components/shopping-view/product-details'
+import { getFeatureImages } from '@/store/common-slice';
 
 const categoriesWithIcon = [
     { id: "men", label: "Men", icon: Shirt },
@@ -34,12 +32,12 @@ function ShoppingHome() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const { productList, productDetails } = useSelector((state) => state.shopProducts);
     const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+    const { featureImageList } = useSelector((state) => state.commonFeature);
+
     const { user } = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const slides = [bannerOne, bannerTwo, bannerThree];
 
     const handleNavigateToListingPage = (item, section) => {
         sessionStorage.removeItem('filters');
@@ -74,35 +72,39 @@ function ShoppingHome() {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentSlide(prev => (prev + 1) % slides.length);
+            setCurrentSlide(prev => (prev + 1) % featureImageList.length);
         }, 5000);
         return () => clearInterval(timer);
-    }, []);
+    }, [featureImageList]);
 
     useEffect(() => {
         dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: 'price-lowtohigh' }));
     }, [dispatch]);
 
+      useEffect(() => {
+        dispatch(getFeatureImages());
+      }, [dispatch]);
+
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Banner Carousel */}
             <div className="relative w-full h-[600px] overflow-hidden">
-                {slides.map((slide, index) => (
+                {featureImageList && featureImageList.length > 0 ? featureImageList.map((slide, index) => (
                     <img
                         key={index}
-                        src={slide}
+                        src={slide?.image}
                         alt={`Banner ${index + 1}`}
                         className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
                     />
-                ))}
+                )) : null}
                 <Button variant="ghost" size="icon"
-                    onClick={() => setCurrentSlide((currentSlide - 1 + slides.length) % slides.length)}
+                    onClick={() => setCurrentSlide((currentSlide - 1 + featureImageList.length) % featureImageList.length)}
                     className="absolute top-1/2 left-6 transform -translate-y-1/2 bg-white/70 hover:bg-white shadow-md rounded-full"
                 >
                     <ChevronLeftIcon className="w-6 h-6 text-gray-800" />
                 </Button>
                 <Button variant="ghost" size="icon"
-                    onClick={() => setCurrentSlide((currentSlide + 1) % slides.length)}
+                    onClick={() => setCurrentSlide((currentSlide + 1) % featureImageList.length)}
                     className="absolute top-1/2 right-6 transform -translate-y-1/2 bg-white/70 hover:bg-white shadow-md rounded-full"
                 >
                     <ChevronRightIcon className="w-6 h-6 text-gray-800" />

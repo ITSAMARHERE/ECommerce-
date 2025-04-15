@@ -7,7 +7,7 @@ import axios from "axios";
 import { Skeleton } from "../ui/skeleton";
 
 
-function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUploadedImageUrl,imageLoadingState,setImageLoadingState,isEditMode }) {
+function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUploadedImageUrl,imageLoadingState,setImageLoadingState,isEditMode, isCustomStyling = false }) {
     const inputRef = useRef(null)
 
     function handleImageFileChange(event) {
@@ -54,7 +54,7 @@ function ProductImageUpload({ imageFile, setImageFile, uploadedImageUrl, setUplo
     },[imageFile]);
 
     return (
-        <div className="w-full max-w-md mx-auto">
+        <div className={`w-full  ${isCustomStyling ? '' : 'max-w-md mx-auto'}`}>
             <Label className="text-lg font-semibold mb-2 block">
                 Upload Image
             </Label>
