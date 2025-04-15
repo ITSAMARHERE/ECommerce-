@@ -113,7 +113,7 @@ function ShoppingCheckout() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 p-6">
                 <div className="bg-white p-5 rounded-xl shadow-md">
                     <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
-                    <Address setCurrentSelectedAddress={setCurrentSelectedAddress} />
+                    <Address selectedId={currentSelectedAddress} setCurrentSelectedAddress={setCurrentSelectedAddress} />
                 </div>
 
                 <div className="bg-white p-5 rounded-xl shadow-md flex flex-col gap-4">
@@ -136,7 +136,9 @@ function ShoppingCheckout() {
                         <Button
                             onClick={handleInitiatePaypalPayment}
                             className="w-full bg-blue-600 cursor-pointer hover:bg-blue-700 text-white text-base py-2">
-                            Checkout with PayPal
+                            {
+                                isPaymentStart ? 'Processing Paypal Payment...': 'Checkout with Paypal'
+                            }
                         </Button>
                     </div>
                 </div>

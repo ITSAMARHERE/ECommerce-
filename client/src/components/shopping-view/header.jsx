@@ -87,9 +87,10 @@ function HeaderRightContent() {
         <Button
           onClick={() => setOpenCartSheet(true)}
           size="icon"
-          className=" cursor-pointer border border-gray-300 bg-white hover:bg-gray-100 transition-all duration-200 shadow-sm rounded-xl p-2"
+          className=" relative cursor-pointer border border-gray-300 bg-white hover:bg-gray-100 transition-all duration-200 shadow-sm rounded-xl p-2"
         >
           <ShoppingCart className="w-5 h-5 text-gray-700" />
+          <span className="text-black absolute bottom-[1px] right-[4px] text-sm">{cartItems?.items?.length || 0}</span>
           <span className="sr-only">User cart</span>
         </Button>
 

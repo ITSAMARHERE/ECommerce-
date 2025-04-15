@@ -18,13 +18,13 @@ function AddressCard({
           ? () => setCurrentSelectedAddress(addressInfo)
           : null
       }
-      className={` transition-all duration-200 ${
+      className={` cursor-pointer transition-all duration-200 ${
         isSelected
           ? "border-[2px] border-gray-900 bg-gray-50"
           : "border border-gray-200 hover:border-gray-400"
       }`}
     >
-      <CardContent className="grid gap-2 p-4 text-sm text-gray-800">
+      <CardContent className={`${selectedId === addressInfo?._id ? 'border-black':''}grid gap-2 p-4 text-sm text-gray-800`}>
         <Label>Address: {addressInfo?.address}</Label>
         <Label>City: {addressInfo?.city}</Label>
         <Label>Pincode: {addressInfo?.pincode}</Label>
