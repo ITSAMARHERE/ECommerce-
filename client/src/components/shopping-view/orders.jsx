@@ -35,37 +35,51 @@ function ShoppingOrders() {
     }
   }, [dispatch, user?.id]);
 
-  console.log(orderDetails,"orderDetails")
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    return dateString.split("T")[0];
+  };
+
+  const truncateId = (id) => {
+    if (!id) return "-";
+    return window.innerWidth < 640 ? `...${id.slice(-8)}` : id;
+  };
 
   return (
-    <Card className="border border-gray-300 shadow-sm">
-      <CardHeader className="border-b border-gray-300">
-        <CardTitle className="text-lg font-semibold text-gray-800">
+    <Card className="border border-gray-300 shadow-md overflow-hidden">
+      <CardHeader className="border-b border-gray-300 bg-gray-50 py-4">
+        <CardTitle className="text-lg md:text-xl font-semibold text-gray-800">
           Order History
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <Table className="w-full border border-gray-300">
-          <TableHeader className="bg-gray-100">
-            <TableRow className="border-b border-gray-300">
-              <TableHead className="border-r border-gray-300 px-4 py-2 text-gray-700">Order ID</TableHead>
-              <TableHead className="border-r border-gray-300 px-4 py-2 text-gray-700">Order Date</TableHead>
-              <TableHead className="border-r border-gray-300 px-4 py-2 text-gray-700">Order Status</TableHead>
-              <TableHead className="border-r border-gray-300 px-4 py-2 text-gray-700">Order Price</TableHead>
-              <TableHead className="px-4 py-2 text-gray-700">
-                <span className="sr-only">Details</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orderList && orderList.length > 0
-              ? orderList.map((orderItem) => (
-                  <TableRow key={orderItem._id} className="border-b border-gray-300 hover:bg-gray-50">
-                    <TableCell className="border-r border-gray-300 px-4 py-2">{orderItem?._id}</TableCell>
-                    <TableCell className="border-r border-gray-300 px-4 py-2">{orderItem?.orderDate.split("T")[0]}</TableCell>
-                    <TableCell className="border-r border-gray-300 px-4 py-2">
+        <div className="overflow-x-auto">
+          <Table className="w-full">
+            <TableHeader className="bg-gray-100">
+              <TableRow className="border-b border-gray-300">
+                <TableHead className="whitespace-nowrap px-3 py-3 text-gray-700 text-sm font-medium">Order ID</TableHead>
+                <TableHead className="whitespace-nowrap px-3 py-3 text-gray-700 text-sm font-medium">Date</TableHead>
+                <TableHead className="whitespace-nowrap px-3 py-3 text-gray-700 text-sm font-medium">Status</TableHead>
+                <TableHead className="whitespace-nowrap px-3 py-3 text-gray-700 text-sm font-medium">Price</TableHead>
+                <TableHead className="whitespace-nowrap px-3 py-3 text-gray-700 text-sm font-medium">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {orderList && orderList.length > 0 ? (
+                orderList.map((orderItem) => (
+                  <TableRow key={orderItem._id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                    <TableCell className="px-3 py-3 text-sm max-w-[120px] md:max-w-none truncate">
+                      <span className="hidden sm:inline">{orderItem?._id}</span>
+                      <span className="sm:hidden">{truncateId(orderItem?._id)}</span>
+                    </TableCell>
+                    <TableCell className="px-3 py-3 text-sm whitespace-nowrap">
+                      {formatDate(orderItem?.orderDate)}
+                    </TableCell>
+                    <TableCell className="px-3 py-3">
                       <Badge
-                        className={`py-1 px-3 capitalize text-white ${
+                        className={`py-1 px-2 text-xs whitespace-nowrap capitalize text-white ${
                           orderItem?.orderStatus === "confirmed"
                             ? "bg-green-500"
                             : orderItem?.orderStatus === "rejected"
@@ -76,8 +90,10 @@ function ShoppingOrders() {
                         {orderItem?.orderStatus}
                       </Badge>
                     </TableCell>
-                    <TableCell className="border-r border-gray-300 px-4 py-2">${orderItem?.totalAmount}</TableCell>
-                    <TableCell className="px-4 py-2">
+                    <TableCell className="px-3 py-3 text-sm font-medium whitespace-nowrap">
+                      ${orderItem?.totalAmount}
+                    </TableCell>
+                    <TableCell className="px-3 py-3 text-right">
                       <Dialog
                         open={openDetailsDialog}
                         onOpenChange={() => {
@@ -91,24 +107,29 @@ function ShoppingOrders() {
                             handleFetchOrderDetails(orderItem?._id);
                           }}
                           variant="outline"
-                          className="text-sm cursor-pointer"
+                          size="sm"
+                          className="text-xs sm:text-sm cursor-pointer hover:bg-gray-100"
                         >
-                          View Details
+                          Details
                         </Button>
                         <ShoppingOrderDetailsView orderDetails={orderDetails} />
                       </Dialog>
                     </TableCell>
                   </TableRow>
                 ))
-              : (
+              ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6 text-gray-500">
-                    No orders found.
+                  <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <p className="text-sm">No orders found.</p>
+                      <p className="text-xs text-gray-400">Your order history will appear here</p>  
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
-          </TableBody>
-        </Table>
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );

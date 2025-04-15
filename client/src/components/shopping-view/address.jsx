@@ -11,6 +11,7 @@ import {
 } from "@/store/shop/address-slice";
 import AddressCard from "./address-card";
 import { toast } from "sonner";
+import { PlusCircle, Edit2 } from "lucide-react";
 
 const initialAddressFormData = {
   address: "",
@@ -91,34 +92,67 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
       pincode: address?.pincode || "",
       notes: address?.notes || "",
     });
+    
+    // Scroll to form section for better UX
+    setTimeout(() => {
+      document.getElementById("address-form").scrollIntoView({ 
+        behavior: "smooth",
+        block: "start"
+      });
+    }, 100);
   };
 
   return (
-    <div className="space-y-10">
-      {/* Address Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 ">
-        {addressList?.map((item) => (
-          <div
-            key={item._id}
-            className="transition-all transform border border-gray-200 rounded-2xl hover:scale-[1.02] shadow-sm bg-white"
-          >
-            <AddressCard
-              selectedId={selectedId}
-              addressInfo={item}
-              handleEditAddress={handleEditAddress}
-              handleDeleteAddress={handleDeleteAddress}
-              setCurrentSelectedAddress={setCurrentSelectedAddress}
-            />
+    <div className="space-y-10 max-w-4xl mx-auto px-4 sm:px-6">
+      {/* Address List Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-medium text-gray-800">Your Addresses</h2>
+          <span className="text-sm text-gray-500">
+            {addressList?.length || 0}/3 addresses
+          </span>
+        </div>
+
+        {/* Empty State */}
+        {(!addressList || addressList.length === 0) && (
+          <div className="flex flex-col items-center justify-center py-8 px-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-gray-500 mb-2">No addresses found</p>
+            <p className="text-sm text-gray-400 mb-4">Add an address to continue</p>
           </div>
-        ))}
+        )}
+
+        {/* Address Cards */}
+        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {addressList?.map((item) => (
+            <div
+              key={item._id}
+              className="h-full"
+            >
+              <AddressCard
+                selectedId={selectedId}
+                addressInfo={item}
+                handleEditAddress={handleEditAddress}
+                handleDeleteAddress={handleDeleteAddress}
+                setCurrentSelectedAddress={setCurrentSelectedAddress}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Address Form */}
-      <Card className="border border-gray-200 rounded-2xl shadow-sm bg-white">
-        <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl px-6 py-4">
-          <CardTitle className="text-xl font-semibold text-gray-800">
-            {currentEditedId ? "Edit Address" : "Add New Address"}
-          </CardTitle>
+      <Card id="address-form" className="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4">
+          <div className="flex items-center gap-2">
+            {currentEditedId ? (
+              <Edit2 className="h-5 w-5 text-blue-600" />
+            ) : (
+              <PlusCircle className="h-5 w-5 text-blue-600" />
+            )}
+            <CardTitle className="text-xl font-semibold text-gray-800">
+              {currentEditedId ? "Edit Address" : "Add New Address"}
+            </CardTitle>
+          </div>
         </CardHeader>
         <CardContent className="p-6">
           <CommonForm

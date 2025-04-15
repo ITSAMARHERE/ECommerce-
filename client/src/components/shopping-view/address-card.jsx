@@ -1,6 +1,6 @@
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
-import { Label } from "../ui/label";
+import { MapPin, Edit, Trash2 } from "lucide-react";
 
 function AddressCard({
   addressInfo,
@@ -18,39 +18,62 @@ function AddressCard({
           ? () => setCurrentSelectedAddress(addressInfo)
           : null
       }
-      className={` cursor-pointer transition-all duration-200 ${
+      className={`cursor-pointer transition-all duration-300 h-full ${
         isSelected
-          ? "border-[2px] border-gray-900 bg-gray-50"
+          ? "border-2 border-gray-900 bg-gray-50"
           : "border border-gray-200 hover:border-gray-400"
       }`}
     >
-      <CardContent className={`${selectedId === addressInfo?._id ? 'border-black':''}grid gap-2 p-4 text-sm text-gray-800`}>
-        <Label>Address: {addressInfo?.address}</Label>
-        <Label>City: {addressInfo?.city}</Label>
-        <Label>Pincode: {addressInfo?.pincode}</Label>
-        <Label>Phone: {addressInfo?.phone}</Label>
-        {addressInfo?.notes && <Label>Notes: {addressInfo?.notes}</Label>}
+      <CardContent className="p-4 flex flex-col h-40">
+        <div className="flex items-start gap-2">
+          <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
+          <div className="flex-1 text-sm text-gray-800">
+            <div className="grid gap-1">
+              <div>
+                <span className="font-medium text-gray-700">Address:</span> {addressInfo?.address}
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">City:</span> {addressInfo?.city}
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Pincode:</span> {addressInfo?.pincode}
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Phone:</span> {addressInfo?.phone}
+              </div>
+              {addressInfo?.notes && (
+                <div>
+                  <span className="font-medium text-gray-700">Notes:</span> {addressInfo?.notes}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </CardContent>
 
-      <CardFooter className="px-4 pb-4 pt-2 flex justify-end gap-3">
+      <CardFooter className="px-4 pb-4 pt-0 flex justify-end gap-2 mt-auto">
         <Button
           variant="outline"
+          size="sm"
           className="cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             handleEditAddress(addressInfo);
           }}
         >
+          <Edit className="h-4 w-4 mr-1" />
           Edit
         </Button>
         <Button
           variant="destructive"
+          size="sm"
           className="cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             handleDeleteAddress(addressInfo);
           }}
         >
+          <Trash2 className="h-4 w-4 mr-1" />
           Delete
         </Button>
       </CardFooter>
