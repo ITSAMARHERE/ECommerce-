@@ -1,4 +1,4 @@
-import { Flag, StarIcon } from "lucide-react";
+import { StarIcon, ShoppingCartIcon, CheckCircleIcon, XCircleIcon, MessageSquareIcon } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent } from "../ui/dialog";
@@ -6,30 +6,46 @@ import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
-import { toast } from "sonner"
+import { toast } from "sonner";
 import { setProductDetails } from "@/store/shop/products-slice";
-
+import { Label } from "../ui/label";
+import { useEffect, useState } from "react";
+import { addReview, getReviews } from "@/store/shop/review-slice";
+import StarRatingComponent from "../common/star.rating";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
-
+    const [reviewMsg, setReviewMsg] = useState("");
+    const [rating, setRating] = useState(0);
+    const [isAdding, setIsAdding] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const dispatch = useDispatch();
-    const { user } = useSelector(state => state.auth);
-    const { cartItems } = useSelector(state => state.shopCart);
+    const { user } = useSelector((state) => state.auth);
+    const { cartItems } = useSelector((state) => state.shopCart);
+    const { reviews } = useSelector((state) => state.shopReview);
 
-    function handleAddtoCart(getCurrentProductId, getTotalStock) {
+    function handleRatingChange(getRating) {
+        setRating(getRating);
+    }
+
+    function handleAddToCart(getCurrentProductId, getTotalStock) {
         let getCartItems = cartItems.items || [];
+        setIsAdding(true);
 
         if (getCartItems.length) {
-            const indexOfCurrentItem = getCartItems.findIndex(item => item.productId === getCurrentProductId);
+            const indexOfCurrentItem = getCartItems.findIndex(
+                (item) => item.productId === getCurrentProductId
+            );
             if (indexOfCurrentItem > -1) {
-                const getQuantity = getCartItems[indexOfCurrentItem].quantity
+                const getQuantity = getCartItems[indexOfCurrentItem].quantity;
                 if (getQuantity + 1 > getTotalStock) {
-                    toast.error(`Only ${getQuantity} quantity can be added for this item`);
+                    toast({
+                        title: `Only ${getQuantity} quantity can be added for this item`,
+                        variant: "destructive",
+                    });
+                    setIsAdding(false);
                     return;
                 }
             }
-
-            ;
         }
         dispatch(
             addToCart({
@@ -40,104 +56,217 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         ).then((data) => {
             if (data?.payload?.success) {
                 dispatch(fetchCartItems(user?.id));
-                toast.success("Product added to cart");
+                toast.success("Product is added to cart");
             }
+            setTimeout(() => setIsAdding(false), 500);
         });
     }
 
     function handleDialogClose() {
-        setOpen(false)
+        setOpen(false);
         dispatch(setProductDetails());
+        setRating(0);
+        setReviewMsg("");
     }
+
+    function handleAddReview() {
+        setIsSubmitting(true);
+        dispatch(
+            addReview({
+                productId: productDetails?._id,
+                userId: user?.id,
+                userName: user?.userName,
+                reviewMessage: reviewMsg,
+                reviewValue: rating,
+            })
+        ).then((data) => {
+            if (data.payload.success) {
+                setRating(0);
+                setReviewMsg("");
+                dispatch(getReviews(productDetails?._id));
+                toast.success("Review added successfully!");
+            }
+            setTimeout(() => setIsSubmitting(false), 500);
+        });
+    }
+
+    useEffect(() => {
+        if (productDetails !== null) dispatch(getReviews(productDetails?._id));
+    }, [productDetails]);
+
+    const averageReview =
+        reviews && reviews.length > 0
+            ? reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) /
+              reviews.length
+            : 0;
 
     return (
         <Dialog open={open} onOpenChange={handleDialogClose}>
-            <DialogContent className="bg-white grid grid-cols-1 md:grid-cols-2 gap-6 p-6 sm:p-8 md:p-10 max-w-[95vw] sm:max-w-[90vw] lg:max-w-[65vw] rounded-2xl shadow-2xl">
-
-                {/* Image Section */}
-                <div className="relative overflow-hidden rounded-xl border border-gray-200 shadow-md">
+            <DialogContent className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white sm:p-6 rounded-xl shadow-lg border border-gray-200 max-w-[90vw] sm:max-w-[70vw] lg:max-w-[60vw] overflow-hidden">
+                <div className="relative rounded-lg border border-gray-200 overflow-hidden group">
+                    <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300"></div>
                     <img
                         src={productDetails?.image}
                         alt={productDetails?.title}
-                        className="aspect-square w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        className="aspect-square w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                </div>
-
-                {/* Details Section */}
-                <div className="bg-white rounded-xl border border-gray-200 shadow-md p-5 flex flex-col gap-4">
-                    <h1 className="text-3xl font-bold text-gray-900">{productDetails?.title}</h1>
-                    <p className="text-gray-700 text-sm leading-relaxed">{productDetails?.description}</p>
-
-                    {/* Price Section */}
-                    <div className="flex justify-between items-center mt-2">
-                        <span
-                            className={`text-xl font-medium ${productDetails?.salePrice > 0 ? "text-gray-400 line-through" : "text-black"}`}
-                        >
-                            ${productDetails?.price}
-                        </span>
-                        {productDetails?.salePrice > 0 && (
-                            <span className="text-xl font-bold text-black">
-                                ${productDetails?.salePrice}
+                    {productDetails?.salePrice > 0 && (
+                        <div className="absolute top-2 right-2">
+                            <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-semibold shadow-md flex items-center gap-1">
+                                <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                                Sale
                             </span>
-                        )}
-                    </div>
-
-                    {/* Rating */}
-                    <div className="flex items-center gap-2 mt-2">
-                        <div className="flex gap-0.5">
-                            {[...Array(5)].map((_, i) => (
-                                <StarIcon key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            ))}
                         </div>
-                        <span className="text-xs text-muted-foreground">(4.5)</span>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h3 className="text-white text-sm font-medium truncate">{productDetails?.title}</h3>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-3 border-l border-gray-200 pl-4">
+                    <div>
+                        <div className="flex justify-between items-start">
+                            <h1 className="text-xl font-bold text-gray-900 group">
+                                {productDetails?.title}
+                                <div className="h-0.5 w-0 group-hover:w-full bg-indigo-500 transition-all duration-300"></div>
+                            </h1>
+                            <div className="flex items-center gap-1 bg-gradient-to-r from-amber-100 to-yellow-100 px-2 py-0.5 rounded-full shadow-sm">
+                                <StarIcon className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                                <span className="text-xs font-medium">{averageReview.toFixed(1)}</span>
+                            </div>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1 leading-relaxed">{productDetails?.description}</p>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 mt-1">
+                        <div className="flex flex-col">
+                            <span className="text-xs text-gray-500 uppercase tracking-wide">Price</span>
+                            <div className="flex items-center gap-2">
+                                <p
+                                    className={`text-lg font-semibold relative ${
+                                        productDetails?.salePrice > 0 ? "line-through text-gray-400" : "text-gray-900"
+                                    }`}
+                                >
+                                    ${productDetails?.price}
+                                </p>
+                                {productDetails?.salePrice > 0 && (
+                                    <p className="text-lg font-bold text-green-600 flex items-center">
+                                        ${productDetails?.salePrice}
+                                        <span className="ml-1 text-xs bg-green-100 text-green-800 px-1 py-0.5 rounded">
+                                            {Math.round((1 - productDetails?.salePrice / productDetails?.price) * 100)}% off
+                                        </span>
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col">
+                            <span className="text-xs text-gray-500 uppercase tracking-wide">Stock</span>
+                            <span className={`text-sm font-medium flex items-center gap-1 ${productDetails?.totalStock > 0 ? "text-green-600" : "text-red-500"}`}>
+                                {productDetails?.totalStock > 0 ? (
+                                    <>
+                                        <CheckCircleIcon className="h-3 w-3" />
+                                        {productDetails?.totalStock} available
+                                    </>
+                                ) : (
+                                    <>
+                                        <XCircleIcon className="h-3 w-3" />
+                                        Out of stock
+                                    </>
+                                )}
+                            </span>
+                        </div>
                     </div>
 
-                    {
-                        productDetails?.totalStock === 0 ?
-                            <Button
-                                className="mt-3 w-full opacity-60 cursor-not-allowed text-sm py-2.5">
-                                Out of Stock
-                            </Button> :
-                            <Button
-                                onClick={() => handleAddtoCart(productDetails?._id, productDetails?.totalStock)}
-                                className="mt-3 w-full text-sm py-2.5">
+                    {productDetails?.totalStock === 0 ? (
+                        <Button className="w-full mt-1 h-8 opacity-60 cursor-not-allowed bg-gray-300 hover:bg-gray-300 text-gray-700 text-sm" disabled>
+                            Out of Stock
+                        </Button>
+                    ) : (
+                        <Button
+                            className="w-full mt-1 h-8 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm relative overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg"
+                            onClick={() => handleAddToCart(productDetails?._id, productDetails?.totalStock)}
+                            disabled={isAdding}
+                        >
+                            <span className={`flex items-center justify-center gap-1.5 transition-transform duration-300 ${isAdding ? "-translate-y-8" : "translate-y-0"}`}>
+                                <ShoppingCartIcon className="h-3.5 w-3.5" />
                                 Add to Cart
-                            </Button>
-                    }
+                            </span>
+                            <span className={`absolute inset-0 flex items-center justify-center transition-transform duration-300 ${isAdding ? "translate-y-0" : "translate-y-8"}`}>
+                                Adding...
+                            </span>
+                        </Button>
+                    )}
 
-                    <Separator className="my-5" />
+                    <Separator className="my-1" />
 
-                    {/* Reviews */}
-                    <div className="max-h-[250px] overflow-y-auto pr-1">
-                        <h2 className="text-lg font-semibold mb-3">Reviews</h2>
-                        <div className="grid gap-4">
-                            {[1, 2, 3].map((_, idx) => (
-                                <div key={idx} className="flex items-start gap-3">
-                                    <Avatar className="w-9 h-9 border">
-                                        <AvatarFallback>AP</AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex flex-col gap-1">
-                                        <div className="flex items-center gap-2">
-                                            <h3 className="text-sm font-semibold">Amar Pal</h3>
+                    <div className="overflow-y-auto max-h-[180px] pr-2 border-t border-gray-200 pt-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                        <h2 className="text-sm font-semibold text-gray-800 mb-2 flex items-center gap-1">
+                            <MessageSquareIcon className="h-3.5 w-3.5 text-indigo-500" />
+                            <span>Customer Reviews</span>
+                            <span className="text-xs text-gray-500 font-normal rounded-full bg-gray-100 px-1.5 py-0.5 ml-1">
+                                {reviews?.length || 0}
+                            </span>
+                        </h2>
+                        <div className="grid gap-3">
+                            {reviews && reviews.length > 0 ? (
+                                reviews.map((reviewItem, idx) => (
+                                    <div key={idx} className="flex gap-3 p-2 rounded-lg bg-gray-50 hover:bg-white border border-transparent hover:border-gray-200 transition-all duration-200 shadow-sm hover:shadow">
+                                        <Avatar className="w-8 h-8 border ring-1 ring-white shadow-sm">
+                                            <AvatarFallback className="bg-gradient-to-br from-indigo-50 to-indigo-100 text-indigo-600 text-xs">
+                                                {reviewItem?.userName[0].toUpperCase()}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex flex-col">
+                                            <h3 className="font-medium text-sm text-gray-900">{reviewItem?.userName}</h3>
+                                            <div className="flex gap-0.5 my-0.5">
+                                                <StarRatingComponent rating={reviewItem?.reviewValue} />
+                                            </div>
+                                            <p className="text-xs text-gray-600">
+                                                {reviewItem.reviewMessage}
+                                            </p>
                                         </div>
-                                        <div className="flex gap-0.5">
-                                            {[...Array(5)].map((_, i) => (
-                                                <StarIcon key={i} className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                                            ))}
-                                        </div>
-                                        <p className="text-xs text-muted-foreground">
-                                            This is an awesome product.
-                                        </p>
                                     </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-4 border border-dashed border-gray-200 rounded-lg bg-gray-50">
+                                    <p className="text-xs text-gray-500">No reviews yet. Be the first to review this product!</p>
                                 </div>
-                            ))}
+                            )}
                         </div>
+                    </div>
 
-                        {/* Review Input */}
-                        <div className="mt-4 flex gap-2">
-                            <Input placeholder="Write a review..." className="flex-1 text-sm" />
-                            <Button size="sm">Submit</Button>
+                    <div className="mt-2 flex flex-col gap-2 border-t border-gray-200 pt-2">
+                        <Label className="text-sm text-gray-700 font-medium flex items-center gap-1">
+                            <StarIcon className="h-3.5 w-3.5 text-indigo-500" />
+                            Write a Review
+                        </Label>
+                        <div className="flex gap-1 bg-gradient-to-r from-gray-50 to-gray-100 p-1.5 rounded-lg">
+                            <StarRatingComponent
+                                rating={rating}
+                                handleRatingChange={handleRatingChange}
+                            />
+                            <span className="text-xs text-gray-500 self-center ml-1">
+                                {rating > 0 ? `${rating} star${rating > 1 ? 's' : ''}` : 'Select rating'}
+                            </span>
                         </div>
+                        <Input
+                            value={reviewMsg}
+                            onChange={(e) => setReviewMsg(e.target.value)}
+                            placeholder="Share your thoughts..."
+                            className="rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-8 text-sm shadow-sm"
+                        />
+                        <Button
+                            onClick={handleAddReview}
+                            disabled={reviewMsg.trim() === "" || rating === 0 || isSubmitting}
+                            className="self-end h-8 text-sm bg-indigo-600 hover:bg-indigo-700 text-white disabled:bg-gray-300 relative overflow-hidden shadow-md"
+                        >
+                            <span className={`flex items-center justify-center transition-transform duration-300 ${isSubmitting ? "-translate-y-8" : "translate-y-0"}`}>
+                                Submit Review
+                            </span>
+                            <span className={`absolute inset-0 flex items-center justify-center transition-transform duration-300 ${isSubmitting ? "translate-y-0" : "translate-y-8"}`}>
+                                Submitting...
+                            </span>
+                        </Button>
                     </div>
                 </div>
             </DialogContent>
