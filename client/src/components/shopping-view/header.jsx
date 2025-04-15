@@ -1,4 +1,4 @@
-import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
+import { HousePlug, LogOut, Menu, ShoppingCart, UserCog, Search, ChevronDown } from "lucide-react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { SheetTrigger, Sheet, SheetContent } from "../ui/sheet";
 import { Button } from "../ui/button";
@@ -20,10 +20,10 @@ import { fetchCartItems } from "@/store/shop/cart-slice";
 import { Label } from "../ui/label";
 
 function MenuItems() {
-
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [activeItem, setActiveItem] = useState('');
 
   function handleNavigate(getCurrentMenuItem) {
     sessionStorage.removeItem('filters')
@@ -41,18 +41,30 @@ function MenuItems() {
 
     navigate(getCurrentMenuItem.path)
   }
+
+  useEffect(() => {
+    // Set active menu item based on current path
+    const currentPath = location.pathname.split('/').pop();
+    setActiveItem(currentPath || 'home');
+  }, [location.pathname]);
+
   return (
-    <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-4 lg:flex-row">
+    <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
         <Label
           onClick={() => handleNavigate(menuItem)}
           key={menuItem.id}
-          className="text-sm cursor-pointer font-medium relative group transition-all"
+          className={`text-sm cursor-pointer font-medium relative group transition-all ${
+            activeItem === menuItem.id ? 'text-blue-600' : 'text-gray-700'
+          }`}
         >
-          <span className="hover:text-blue-600 transition-colors duration-300">
+          <span className="hover:text-blue-600 transition-colors duration-300 flex items-center gap-1">
             {menuItem.label}
+            {menuItem.hasChildren && <ChevronDown className="w-3 h-3 opacity-70" />}
           </span>
-          <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+          <span className={`absolute -bottom-1 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${
+            activeItem === menuItem.id ? 'w-full' : 'w-0 group-hover:w-full'
+          }`}></span>
         </Label>
       ))}
     </nav>
@@ -70,108 +82,167 @@ function HeaderRightContent() {
     dispatch(logoutUser());
   }
 
+  function handleSearch() {
+    // Navigate to search page
+    const searchMenuItem = shoppingViewHeaderMenuItems.find(item => item.id === 'search');
+    if (searchMenuItem) {
+      sessionStorage.removeItem('filters');
+      navigate(searchMenuItem.path);
+    }
+  }
+
   useEffect(() => {
     if (user?.id) {
-      console.log("Fetching cart for user ID:", user.id);
       dispatch(fetchCartItems(user?.id));
-    } else {
-      console.log("User ID is not available.");
     }
   }, [dispatch, user?.id]);
-  
-  console.log(cartItems, "myname")
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
+      {/* Search button */}
+      <Button
+        onClick={handleSearch}
+        size="icon"
+        variant="ghost"
+        className="relative hover:bg-gray-100 transition-all duration-200 rounded-full p-2"
+      >
+        <Search className="w-5 h-5 text-gray-700" />
+        <span className="sr-only">Search</span>
+      </Button>
+
+      {/* Cart button */}
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
         <Button
           onClick={() => setOpenCartSheet(true)}
           size="icon"
-          className=" relative cursor-pointer border border-gray-300 bg-white hover:bg-gray-100 transition-all duration-200 shadow-sm rounded-xl p-2"
+          className="relative bg-amber-50 hover:bg-gray-500 transition-all duration-200 rounded-full p-2"
         >
           <ShoppingCart className="w-5 h-5 text-gray-700" />
-          <span className="text-black absolute bottom-[1px] right-[4px] text-sm">{cartItems?.items?.length || 0}</span>
+          {cartItems?.items?.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+              {cartItems?.items?.length}
+            </span>
+          )}
           <span className="sr-only">User cart</span>
         </Button>
 
-
         <UserCartWrapper
-        setOpenCartSheet = {setOpenCartSheet}
-        cartItems={
-          cartItems && cartItems.items && cartItems.items.length > 0 ? cartItems.items : []} />
+          setOpenCartSheet={setOpenCartSheet}
+          cartItems={
+            cartItems && cartItems.items && cartItems.items.length > 0 ? cartItems.items : []} />
       </Sheet>
 
+      {/* User Profile */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="bg-black cursor-pointer hover:scale-105 transition-transform shadow-md">
-            <AvatarFallback className="bg-black text-white font-extrabold">
-              {user?.userName[0].toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+          <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded-full pl-2 pr-4 py-1 transition-all duration-200">
+            <Avatar className="h-8 w-8 bg-blue-600 hover:shadow-md transition-transform">
+              <AvatarFallback className="bg-blue-600 text-white font-bold text-sm">
+                {user?.userName?.[0]?.toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-gray-700 hidden lg:inline-block font-medium">
+              {user?.userName || "User"}
+            </span>
+          </div>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
-          side="right"
-          className="w-60 bg-white border border-gray-200 rounded-xl shadow-lg p-2 space-y-1"
+          side="bottom"
+          align="end"
+          className="w-64 bg-white border border-gray-200 rounded-xl shadow-lg p-2 mt-2"
         >
-          <DropdownMenuLabel className="text-sm font-medium text-gray-500 px-2">
-            Logged in as <span className="font-semibold text-gray-700">{user?.userName}</span>
+          <DropdownMenuLabel className="flex flex-col px-3 py-2 border-b border-gray-100">
+            <span className="text-sm font-semibold text-gray-800">
+              {user?.userName || "User"}
+            </span>
+            <span className="text-xs text-gray-500">
+              {user?.email || "user@example.com"}
+            </span>
           </DropdownMenuLabel>
 
-          <DropdownMenuSeparator />
+          <div className="p-2">
+            <DropdownMenuItem
+              onClick={() => navigate("/shop/account")}
+              className="cursor-pointer px-3 py-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-2.5 text-gray-700 transition-colors"
+            >
+              <UserCog className="h-4 w-4 text-blue-600" />
+              Account Settings
+            </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() => navigate("/shop/account")}
-            className="cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 flex items-center gap-2 text-gray-700 transition-colors"
-          >
-            <UserCog className="h-4 w-4 text-gray-500" />
-            Account
-          </DropdownMenuItem>
+            {/* <DropdownMenuItem
+              className="cursor-pointer px-3 py-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-2.5 text-gray-700 transition-colors"
+            >
+              <ShoppingCart className="h-4 w-4 text-blue-600" />
+              My Orders
+            </DropdownMenuItem> */}
 
-          <DropdownMenuItem
-            onClick={handleLogout}
-            className="cursor-pointer px-3 py-2 rounded-lg hover:bg-red-100 flex items-center gap-2 text-red-600 transition-colors"
-          >
-            <LogOut className="h-4 w-4 text-red-500" />
-            Logout
-          </DropdownMenuItem>
+            <DropdownMenuSeparator className="my-1.5" />
+
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="cursor-pointer px-3 py-2.5 rounded-lg hover:bg-red-50 flex items-center gap-2.5 text-red-600 font-medium transition-colors"
+            >
+              <LogOut className="h-4 w-4 text-red-500" />
+              Logout
+            </DropdownMenuItem>
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
-
     </div>
   );
 }
 
 function ShoppingHeader() {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-gray-300 bg-white">
-      <div className="flex h-16 items-center justify-between px-4 md:px-6">
+    <header className={`sticky top-0 z-40 w-full border-b border-gray-200 bg-white ${
+      isScrolled ? 'shadow-md' : ''
+    } transition-shadow duration-300`}>
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link
           to="/shop/home"
           className="flex items-center gap-2 hover:text-blue-600 transition-colors duration-300"
         >
-          <HousePlug className="h-6 w-6 text-blue-500" />
+          <HousePlug className="h-6 w-6 text-blue-600" />
           <span className="font-bold text-gray-800 text-lg">Ecommerce</span>
         </Link>
         <Sheet>
           <SheetTrigger asChild>
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
-              className="lg:hidden hover:bg-blue-100"
+              className="lg:hidden hover:bg-blue-50 rounded-full"
             >
-              <Menu className="h-6 w-6 text-gray-700" />
+              <Menu className="h-5 w-5 text-gray-700" />
               <span className="sr-only">Toggle header menu</span>
             </Button>
           </SheetTrigger>
           <SheetContent
             side="left"
-            className="w-full max-w-xs bg-white shadow-md border border-gray-300"
+            className="w-full max-w-xs bg-white shadow-md border-r border-gray-200 p-6"
           >
-            <MenuItems />
-            <HeaderRightContent />
+            <div className="flex flex-col h-full">
+              <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-100">
+                <HousePlug className="h-6 w-6 text-blue-600" />
+                <span className="font-bold text-gray-800 text-lg">Ecommerce</span>
+              </div>
+              <MenuItems />
+              <div className="mt-6 pt-6 border-t border-gray-100">
+                <HeaderRightContent />
+              </div>
+            </div>
           </SheetContent>
         </Sheet>
         <div className="hidden lg:block">
