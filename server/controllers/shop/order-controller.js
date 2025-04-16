@@ -62,8 +62,8 @@ const createOrder = async (req, res) => {
         // Change to NO_SHIPPING instead of SET_PROVIDED_ADDRESS since we don't have shipping address details
         shipping_preference: "NO_SHIPPING",  
         user_action: "PAY_NOW",
-        return_url: "http://localhost:5173/shop/paypal-return",
-        cancel_url: "http://localhost:5173/shop/paypal-cancel"
+        return_url: `${process.env.CLIENT_BASE_URL}/shop/paypal-return`,
+        cancel_url: `${process.env.CLIENT_BASE_URL}/shop/paypal-cancel`,
       }
     });
 
