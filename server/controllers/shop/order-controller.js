@@ -22,11 +22,10 @@ const createOrder = async (req, res) => {
       cartId,
     } = req.body;
 
-    // Create a PayPal order using the new SDK
+
     const request = new paypalSdk.orders.OrdersCreateRequest();
     request.prefer("return=representation");
-    
-    // Format items for PayPal
+
     const paypalItems = cartItems.map(item => ({
       name: item.title,
       sku: item.productId,
@@ -37,7 +36,6 @@ const createOrder = async (req, res) => {
       quantity: item.quantity
     }));
 
-    // Calculate item total
     const itemTotal = cartItems.reduce((sum, item) => 
       sum + (item.price * item.quantity), 0).toFixed(2);
 
@@ -59,7 +57,6 @@ const createOrder = async (req, res) => {
       }],
       application_context: {
         brand_name: "Your Store Name",
-        // Change to NO_SHIPPING instead of SET_PROVIDED_ADDRESS since we don't have shipping address details
         shipping_preference: "NO_SHIPPING",  
         user_action: "PAY_NOW",
         return_url: `${process.env.CLIENT_BASE_URL}/shop/paypal-return`,
@@ -67,10 +64,10 @@ const createOrder = async (req, res) => {
       }
     });
 
-    // Execute the PayPal request
+    
     const paypalOrder = await paypalSdk.client.execute(request);
     
-    // Save order to database
+   
     const newlyCreatedOrder = new Order({
       userId,
       cartId,
@@ -82,13 +79,13 @@ const createOrder = async (req, res) => {
       totalAmount,
       orderDate,
       orderUpdateDate,
-      paymentId: paypalOrder.result.id, // Use PayPal order ID
+      paymentId: paypalOrder.result.id, 
       payerId,
     });
 
     await newlyCreatedOrder.save();
 
-    // Get the approval URL from the PayPal response
+   
     const approvalURL = paypalOrder.result.links.find(
       link => link.rel === "approve"
     ).href;

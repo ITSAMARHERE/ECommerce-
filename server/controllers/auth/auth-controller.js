@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
 
 
-//register
+
 const registerUser = async (req, res) => {
     const {userName, email, password} = req.body;
 
@@ -33,7 +33,7 @@ const registerUser = async (req, res) => {
 };
 
 
-//login
+
 const loginUser = async (req,res) => {
     const {email, password} = req.body;
 
@@ -97,7 +97,7 @@ const logoutUser = (req, res) => {
     })
 }
 
-//auth middleware
+
 // const authMiddleware = async (req,res,next) => {
 //     const token = req.cookies.token;
 //     if(!token) return res.status(401).json({
